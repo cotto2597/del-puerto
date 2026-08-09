@@ -11,10 +11,11 @@
   --text:#f5e6d0;--muted:#9a7f60;--border:#3d2e1a;--red:#e53935;
   --blue:#1a1a5a;--blue-text:#90caf9;--green-text:#a5d6a7;
   --purple:#3a1a5a;--purple-text:#c9a5f5;
-  --emp1:#5a3010;--emp1-text:#ffb060;--emp2:#1a3a2a;--emp2-text:#7ee0b0;
+  --emp1:#5a1a3a;--emp1-text:#ff8fd0;--emp2:#0a3a4a;--emp2-text:#5ce8e0;
+  --nocost:#4a1a1a;--nocost-text:#ff9090;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;min-height:100vh;padding:18px 12px 80px;}
+body{background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;min-height:100vh;padding:18px 12px 20px;}
 .container{max-width:780px;margin:0 auto;}
 
 header{text-align:center;margin-bottom:20px;}
@@ -24,6 +25,7 @@ header{text-align:center;margin-bottom:20px;}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background .4s;}
 .sync-dot.connected{background:#4caf50;}
 .sync-dot.syncing{background:var(--accent2);animation:pulse .6s infinite alternate;}
+.sync-dot.error{background:var(--red);}
 @keyframes pulse{from{opacity:.4;}to{opacity:1;}}
 
 .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:16px;}
@@ -37,6 +39,7 @@ header{text-align:center;margin-bottom:20px;}
 .card h2{font-family:"Bebas Neue",sans-serif;font-size:1.3rem;letter-spacing:1px;color:var(--accent2);margin-bottom:12px;}
 .card.hi{border-color:var(--accent);}
 .section-title{font-family:"Bebas Neue",sans-serif;font-size:1.2rem;letter-spacing:1px;color:var(--muted);margin-bottom:9px;margin-top:6px;}
+.hint-text{font-size:.78rem;color:var(--muted);margin-bottom:10px;margin-top:-4px;line-height:1.4;}
 
 input[type=text],input[type=number],input[type=time],input[type=date],input[type=password],input[type=month],select,textarea{
   background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);
@@ -59,18 +62,20 @@ button:active{transform:scale(.96);}
 .btn-icon.edit:hover{background:#1a2a3a;color:var(--blue-text);}
 .btn-full{width:100%;}
 .btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
 
-/* Estilo tipo "card" con boton circular + como la referencia */
 .qty-card{background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s;}
 .qty-card:focus-within{border-color:var(--accent);}
 .qty-card .qlabel{font-size:.78rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
 .qty-card-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.qty-card .qval{font-family:"Bebas Neue",sans-serif;font-size:2.2rem;line-height:1;flex:1;}
-.qty-card input[type=number]{background:transparent;border:none;font-family:"Bebas Neue",sans-serif;font-size:2.2rem;color:var(--text);width:100%;padding:0;outline:none;-moz-appearance:textfield;}
+.qty-card input[type=number]{background:transparent;border:none;font-family:"Bebas Neue",sans-serif;font-size:2.2rem;color:var(--text);width:100%;padding:0;outline:none;-moz-appearance:textfield;text-align:center;}
 .qty-card input[type=number]::-webkit-outer-spin-button,.qty-card input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
 .qty-btn{width:40px;height:40px;border-radius:50%;background:var(--accent);color:#fff;font-size:1.3rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;}
 .qty-btn:hover{opacity:.85;}
 .qty-btn.minus{background:var(--border);color:var(--muted);}
+.qty-card .nocost-row{display:flex;align-items:center;gap:6px;margin-top:2px;}
+.qty-card .nocost-row label{font-size:.66rem;color:var(--nocost-text);flex:1;}
+.qty-card .nocost-row input[type=number]{font-family:"DM Sans",sans-serif;font-size:.85rem;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 6px;width:50px;flex:0 0 auto;}
 
 .pizza-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
 .qty-card.tomate .qlabel{color:#ff9090;}
@@ -100,6 +105,7 @@ button:active{transform:scale(.96);}
 .ov-chip.pizzeta{background:var(--blue);color:var(--blue-text);}
 .ov-chip.carne{background:var(--emp1);color:var(--emp1-text);}
 .ov-chip.jyq{background:var(--emp2);color:var(--emp2-text);}
+.ov-chip.nocost{background:var(--nocost);color:var(--nocost-text);}
 .ov-chip .chip-qty{font-family:"Bebas Neue",sans-serif;font-size:.95rem;line-height:1;}
 
 .clients-stat{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
@@ -141,7 +147,8 @@ button:active{transform:scale(.96);}
 .p-box .pvalue{font-family:"Bebas Neue",sans-serif;font-size:1.4rem;line-height:1;}
 
 .prod-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
-.prod-col-title{font-family:"Bebas Neue",sans-serif;font-size:1rem;color:var(--muted);margin-bottom:8px;letter-spacing:1px;}
+.prod-col-title{font-family:"Bebas Neue",sans-serif;font-size:1rem;color:var(--muted);margin-bottom:4px;letter-spacing:1px;}
+.prod-col-hint{font-size:.72rem;color:var(--muted);margin-bottom:8px;line-height:1.3;}
 .prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:8px;}
 .prod-box{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;}
 .prod-box .plabel{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
@@ -183,7 +190,6 @@ button:active{transform:scale(.96);}
 .close-chips{display:flex;gap:6px;flex-wrap:wrap;}
 
 .admin-lock{text-align:center;padding:40px 20px;}
-.admin-lock .lock-icon{font-size:3rem;margin-bottom:14px;}
 .admin-lock h2{font-family:"Bebas Neue",sans-serif;font-size:1.8rem;color:var(--accent);margin-bottom:16px;letter-spacing:1px;}
 .admin-lock input{max-width:260px;margin:0 auto 12px;display:block;}
 
@@ -209,18 +215,12 @@ button:active{transform:scale(.96);}
 .purchase-row .pdetail{color:var(--muted);font-size:.76rem;}
 .purchase-row .pamt{font-family:"Bebas Neue",sans-serif;font-size:1.1rem;color:var(--accent2);}
 
-.recipe-block{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;}
-.recipe-block h4{font-family:"Bebas Neue",sans-serif;font-size:1.1rem;color:var(--accent2);margin-bottom:10px;letter-spacing:.5px;}
-.recipe-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:10px;}
-.recipe-item{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;}
+.recipe-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px;margin-bottom:6px;}
+.recipe-item{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;}
 .recipe-item .riname{font-size:.76rem;color:var(--muted);font-weight:600;}
 .recipe-item .ri-row{display:flex;gap:4px;align-items:center;}
 .recipe-item .riunit{font-size:.68rem;color:var(--accent2);white-space:nowrap;}
 .recipe-item input{font-size:.85rem;padding:5px 8px;}
-.yield-row{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:8px 10px;margin-bottom:10px;}
-.yield-row label{font-size:.78rem;color:var(--muted);flex:1;}
-.yield-row input{width:80px;flex:0 0 auto;}
-
 .cost-result{background:#1a2a0a;border:1.5px solid #4a8a20;border-radius:12px;padding:14px 16px;margin-top:10px;}
 .cost-result h4{font-family:"Bebas Neue",sans-serif;font-size:1.1rem;color:var(--green-text);margin-bottom:8px;}
 .cost-line{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-bottom:3px;padding:2px 0;}
@@ -252,12 +252,20 @@ button:active{transform:scale(.96);}
 
 .empty{text-align:center;color:var(--muted);padding:20px 0;font-size:.88rem;}
 
+/* Footer Kaizek */
+.kaizek-footer{
+  max-width:780px;margin:24px auto 0;padding-top:16px;
+  border-top:1px dashed var(--border);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:.74rem;color:var(--muted);
+}
+.kaizek-footer img{height:22px;width:auto;opacity:.9;}
+
 @media print{
   body{background:#fff;color:#000;padding:8px;font-family:Arial,sans-serif;}
   .no-print{display:none!important;}
   .container{max-width:100%;}
-  .logo-wrap{background:transparent;}
-  .logo-img{filter:none;}
+  .logo-wrap{background:#fff;}
   .tabs,.sync-indicator,.btn-row,.btn-full{display:none!important;}
   .tab-panel{display:block!important;}
   #panel-produccion,#panel-historial,#panel-admin{display:none!important;}
@@ -269,8 +277,9 @@ button:active{transform:scale(.96);}
   .ov-chip.cebolla{background:#ffe;color:#760;}
   .ov-chip.mixta{background:#dfd;color:#060;}
   .ov-chip.pizzeta{background:#ddf;color:#009;}
-  .ov-chip.carne{background:#fde;color:#a50;}
-  .ov-chip.jyq{background:#dfe;color:#080;}
+  .ov-chip.carne{background:#fde;color:#a06;}
+  .ov-chip.jyq{background:#dff;color:#088;}
+  .ov-chip.nocost{background:#eee;color:#900;}
   .sum-box,.p-box{background:#f5f5f5;border:1px solid #ccc;}
   .total-strip.pizzas{background:#c03000;}
   .total-strip.pizzetas{background:#003080;}
@@ -279,6 +288,7 @@ button:active{transform:scale(.96);}
   .order-num{background:#c03000;}
   .section-title{color:#555;}
   .clients-stat{background:#f5f5f5;}
+  .kaizek-footer{display:none!important;}
 }
 @media(max-width:480px){
   .pizza-grid{grid-template-columns:repeat(2,1fr);}
@@ -288,7 +298,6 @@ button:active{transform:scale(.96);}
   .remaining-grid{grid-template-columns:1fr;}
   .stat-grid{grid-template-columns:1fr;}
   .tabs{grid-template-columns:repeat(2,1fr);}
-  .recipe-grid{grid-template-columns:1fr;}
   .weekday-grid{grid-template-columns:repeat(4,1fr);}
 }
 </style>
@@ -321,23 +330,30 @@ button:active{transform:scale(.96);}
     </div>
 
     <div class="section-title" style="margin-top:14px">Pizzas</div>
+    <p class="hint-text">El numero chico "sin costo" es para pizzas falladas o de cortesia dentro de esa misma cantidad (no se suman aparte, no se cobran ni se cuentan como venta).</p>
     <div class="pizza-grid">
       <div class="qty-card tomate"><span class="qlabel">Tomate</span>
-        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qTomate',-1)">-</button><input type="number" id="qTomate" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qTomate',1)">+</button></div></div>
+        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qTomate',-1)">-</button><input type="number" id="qTomate" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qTomate',1)">+</button></div>
+        <div class="nocost-row"><label>Sin costo:</label><input type="number" id="ncTomate" min="0" value="0"/></div></div>
       <div class="qty-card cebolla"><span class="qlabel">Cebolla</span>
-        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qCebolla',-1)">-</button><input type="number" id="qCebolla" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qCebolla',1)">+</button></div></div>
+        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qCebolla',-1)">-</button><input type="number" id="qCebolla" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qCebolla',1)">+</button></div>
+        <div class="nocost-row"><label>Sin costo:</label><input type="number" id="ncCebolla" min="0" value="0"/></div></div>
       <div class="qty-card mixta"><span class="qlabel">Mixta</span>
-        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qMixta',-1)">-</button><input type="number" id="qMixta" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qMixta',1)">+</button></div></div>
+        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qMixta',-1)">-</button><input type="number" id="qMixta" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qMixta',1)">+</button></div>
+        <div class="nocost-row"><label>Sin costo:</label><input type="number" id="ncMixta" min="0" value="0"/></div></div>
       <div class="qty-card pizzeta"><span class="qlabel">Pizzeta</span>
-        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qPizzeta',-1)">-</button><input type="number" id="qPizzeta" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qPizzeta',1)">+</button></div></div>
+        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qPizzeta',-1)">-</button><input type="number" id="qPizzeta" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qPizzeta',1)">+</button></div>
+        <div class="nocost-row"><label>Sin costo:</label><input type="number" id="ncPizzeta" min="0" value="0"/></div></div>
     </div>
 
     <div class="section-title">Empanadas</div>
     <div class="empanada-grid">
       <div class="qty-card carne"><span class="qlabel">Carne</span>
-        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qCarne',-1)">-</button><input type="number" id="qCarne" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qCarne',1)">+</button></div></div>
+        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qCarne',-1)">-</button><input type="number" id="qCarne" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qCarne',1)">+</button></div>
+        <div class="nocost-row"><label>Sin costo:</label><input type="number" id="ncCarne" min="0" value="0"/></div></div>
       <div class="qty-card jyq"><span class="qlabel">Jamon y queso</span>
-        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qJyq',-1)">-</button><input type="number" id="qJyq" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qJyq',1)">+</button></div></div>
+        <div class="qty-card-row"><button class="qty-btn minus" onclick="stepQty('qJyq',-1)">-</button><input type="number" id="qJyq" min="0" value="0"/><button class="qty-btn" onclick="stepQty('qJyq',1)">+</button></div>
+        <div class="nocost-row"><label>Sin costo:</label><input type="number" id="ncJyq" min="0" value="0"/></div></div>
     </div>
   </div>
 
@@ -369,9 +385,10 @@ button:active{transform:scale(.96);}
       <div class="total-strip pizzetas"><span class="tl">Pizzetas</span><span class="tv" id="sumPizzeta">0</span></div>
     </div>
     <div class="totals-row">
-      <div class="total-strip empanadas"><span class="tl">Empanadas</span><span class="tv" id="sumEmpanadas">0</span></div>
-      <div class="total-strip all"><span class="tl">Total absoluto</span><span class="tv" id="sumAll">0</span></div>
+      <div class="total-strip all"><span class="tl">Total Pizzas+Pizzetas</span><span class="tv" id="sumAll">0</span></div>
+      <div class="total-strip empanadas"><span class="tl">Total Empanadas</span><span class="tv" id="sumEmpanadas">0</span></div>
     </div>
+    <p class="hint-text" id="noCostHint" style="display:none;text-align:center;">De esos totales, <span id="noCostTotal">0</span> son sin costo (falladas / cortesia).</p>
 
     <div class="priority-summary" id="prioritySummary" style="display:none">
       <h3>Prioritarios</h3>
@@ -390,6 +407,11 @@ button:active{transform:scale(.96);}
       <button class="btn btn-secondary" onclick="clearOrders()">Limpiar pedidos</button>
     </div>
   </div>
+
+  <div class="kaizek-footer no-print">
+    <span>Desarrollado por</span>
+    <img src="kaizek-logo.png" alt="Kaizek" onerror="this.replaceWith(Object.assign(document.createElement('strong'),{textContent:'Kaizek'}))">
+  </div>
 </div>
 
 <!-- PRODUCCION -->
@@ -399,6 +421,7 @@ button:active{transform:scale(.96);}
     <div class="prod-cols">
       <div>
         <div class="prod-col-title">En heladera</div>
+        <p class="prod-col-hint">Lo que ya tenias hecho de ayer o de antes, guardado y listo para usar hoy.</p>
         <div class="prod-grid">
           <div class="prod-box tomate"><span class="plabel">Tomate</span><input type="number" id="hTomate" min="0" value="0" oninput="saveProd()"/></div>
           <div class="prod-box cebolla"><span class="plabel">Cebolla</span><input type="number" id="hCebolla" min="0" value="0" oninput="saveProd()"/></div>
@@ -410,6 +433,7 @@ button:active{transform:scale(.96);}
       </div>
       <div>
         <div class="prod-col-title">Amasadas / hechas hoy</div>
+        <p class="prod-col-hint">Lo que se fue horneando o amasando durante el dia de hoy. Se completa solo al registrar una tanda abajo, pero tambien podes editarlo a mano.</p>
         <div class="prod-grid">
           <div class="prod-box tomate"><span class="plabel">Tomate</span><input type="number" id="aTomate" min="0" value="0" oninput="saveProd()"/><span class="prod-rem" id="remTomate"></span></div>
           <div class="prod-box cebolla"><span class="plabel">Cebolla</span><input type="number" id="aCebolla" min="0" value="0" oninput="saveProd()"/><span class="prod-rem" id="remCebolla"></span></div>
@@ -429,24 +453,26 @@ button:active{transform:scale(.96);}
 
   <div class="card">
     <h2>Registrar tanda</h2>
+    <p class="hint-text">Anota una tanda que acabas de sacar del horno. Se suma automaticamente a "Amasadas hoy" de arriba y queda guardada en el historial del dia.</p>
     <div class="tag-selector">
       <div class="tag-btn active" id="batchTypePizza" onclick="setBatchType('pizza')">Pizza</div>
       <div class="tag-btn" id="batchTypeEmp" onclick="setBatchType('empanada')">Empanada</div>
     </div>
-    <div class="row">
-      <input type="time" id="batchTime" style="flex:0 0 auto;width:110px;"/>
-      <div id="batchPizzaInputs" style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-        <input type="number" id="bTomate" placeholder="Tom." min="0" value="0"/>
-        <input type="number" id="bCebolla" placeholder="Ceb." min="0" value="0"/>
-        <input type="number" id="bMixta" placeholder="Mix." min="0" value="0"/>
-        <input type="number" id="bPizzeta" placeholder="Piz." min="0" value="0"/>
-      </div>
-      <div id="batchEmpInputs" style="flex:1;display:none;grid-template-columns:repeat(2,1fr);gap:6px;">
-        <input type="number" id="bCarne" placeholder="Carne" min="0" value="0"/>
-        <input type="number" id="bJyq" placeholder="J&amp;Q" min="0" value="0"/>
-      </div>
-      <button class="btn btn-primary" onclick="addBatch()">+ Tanda</button>
+    <div style="margin-bottom:10px;">
+      <label style="display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px;font-weight:600;">Hora de la tanda</label>
+      <input type="time" id="batchTime" style="max-width:150px;"/>
     </div>
+    <div id="batchPizzaInputs" class="prod-grid">
+      <div class="prod-box tomate"><span class="plabel">Tomate</span><input type="number" id="bTomate" min="0" value="0"/></div>
+      <div class="prod-box cebolla"><span class="plabel">Cebolla</span><input type="number" id="bCebolla" min="0" value="0"/></div>
+      <div class="prod-box mixta"><span class="plabel">Mixta</span><input type="number" id="bMixta" min="0" value="0"/></div>
+      <div class="prod-box pizzeta"><span class="plabel">Pizzeta</span><input type="number" id="bPizzeta" min="0" value="0"/></div>
+    </div>
+    <div id="batchEmpInputs" class="prod-grid" style="display:none;">
+      <div class="prod-box carne"><span class="plabel">Carne</span><input type="number" id="bCarne" min="0" value="0"/></div>
+      <div class="prod-box jyq"><span class="plabel">Jamon y queso</span><input type="number" id="bJyq" min="0" value="0"/></div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="addBatch()">+ Agregar Tanda</button>
     <div class="section-title">Tandas de hoy</div>
     <div class="batch-list" id="batchList"></div>
   </div>
@@ -466,7 +492,6 @@ button:active{transform:scale(.96);}
 <!-- ADMIN -->
 <div class="tab-panel" id="panel-admin">
   <div id="adminLock" class="admin-lock">
-    <div class="lock-icon">Admin</div>
     <h2>Panel de Administracion</h2>
     <input type="password" id="adminPwd" placeholder="Contrasena" onkeydown="if(event.key==='Enter')checkPwd()"/>
     <div class="btn-row" style="justify-content:center;margin-top:10px;">
@@ -502,47 +527,73 @@ button:active{transform:scale(.96);}
 
     <div class="card">
       <h2>Compras de insumos</h2>
-      <p style="color:var(--muted);font-size:.8rem;margin-bottom:10px;">Registra como comprás cada insumo: por ejemplo, bolsa de harina de 25kg a determinado precio. Esto se usa para calcular el costo real.</p>
+      <p class="hint-text">Elegi el insumo de la lista, cuantas presentaciones compraste (ej: "20" bolsas), cuanto pesa/rinde CADA presentacion (ej: "25" kg cada bolsa) y el precio total pagado. Por ejemplo: Harina, 20 unidades, 25 kg cada una, $600.000 total. El sistema usa esto junto a las tandas registradas para calcular el costo por pizza o por empanada.</p>
       <div class="row">
-        <input type="text" id="purchName" placeholder="Insumo (harina, tomate...)"/>
-        <input type="number" id="purchQty" placeholder="Cantidad" min="0" step="0.01"/>
-        <select id="purchUnit">
-          <option value="kg">kg</option>
-          <option value="lt">lt</option>
-          <option value="g">g</option>
-          <option value="ml">ml</option>
-          <option value="u">unidad</option>
+        <select id="purchIngredient" onchange="onPurchIngredientChange()">
+          <option value="">Elegi un insumo</option>
         </select>
-        <input type="number" id="purchPrice" placeholder="Precio total $" min="0"/>
+        <input type="text" id="purchOtherName" placeholder="Nombre del insumo" style="display:none;"/>
+      </div>
+      <div class="row">
+        <input type="number" id="purchPresentations" placeholder="Cantidad comprada (ej: 20 bolsas)" min="0" step="0.01"/>
+        <input type="number" id="purchYieldEach" placeholder="Cuanto rinde cada una" min="0" step="0.01"/>
+        <span id="purchYieldUnitLabel" style="flex:0 0 auto;color:var(--muted);font-size:.82rem;align-self:center;">kg</span>
+      </div>
+      <div class="row">
+        <input type="number" id="purchPrice" placeholder="Precio total pagado $" min="0"/>
+        <input type="date" id="purchDate"/>
         <button class="btn btn-primary" onclick="addPurchase()">Guardar</button>
       </div>
       <div class="purchase-list" id="purchaseList"></div>
     </div>
 
     <div class="card">
-      <h2>Recetas y Costeo</h2>
-      <p style="color:var(--muted);font-size:.8rem;margin-bottom:14px;">Para cada producto: cuanto usás de cada insumo por tanda y cuantas unidades salen de esa tanda. El costo por insumo se toma de las compras cargadas arriba.</p>
-
-      <div class="recipe-block">
-        <h4>Pizzas (por tanda)</h4>
-        <div class="yield-row"><label>Cuantas pizzas salen de esta tanda</label><input type="number" id="yieldPizza" min="0" value="0" oninput="saveRecipe()"/></div>
-        <div id="recipePizzaInputs"></div>
+      <h2>Receta y costo por unidad (teorico)</h2>
+      <p class="hint-text">Opcional: si queres ver el costo estimado de UNA pizza (masa + aderezo segun variedad) o UNA empanada. El sistema busca el costo por unidad de medida de cada insumo en la ultima compra que registraste. Las bolsas y la tinta no entran aca porque son embalaje, no ingrediente.</p>
+      <div class="recipe-block-wrap">
+        <div class="section-title">Masa base de pizza (por tanda)</div>
+        <div class="row">
+          <label style="flex:0 0 100%;font-size:.78rem;color:var(--muted);">Cuantas pizzas salen de una tanda tipica de masa</label>
+        </div>
+        <div class="row">
+          <input type="number" id="yieldPizza" min="0" value="0" placeholder="Ej: 20" oninput="saveRecipe()" style="max-width:120px;"/>
+        </div>
+        <div id="recipePizzaBaseInputs"></div>
       </div>
-
-      <div class="recipe-block">
-        <h4>Empanadas (por tanda)</h4>
-        <div class="yield-row"><label>Cuantas empanadas salen de esta tanda</label><input type="number" id="yieldEmp" min="0" value="0" oninput="saveRecipe()"/></div>
+      <div class="recipe-block-wrap" style="margin-top:16px;">
+        <div class="section-title">Aderezo por variedad (cantidad por pizza individual)</div>
+        <p class="hint-text" style="margin-top:0;">El tomate y la cebolla varian segun que pizza sea. Cargá cuanto lleva cada una.</p>
+        <div id="recipeVarietyInputs"></div>
+      </div>
+      <div class="recipe-block-wrap" style="margin-top:16px;">
+        <div class="section-title">Empanadas (por tanda)</div>
+        <div class="row">
+          <label style="flex:0 0 100%;font-size:.78rem;color:var(--muted);">Cuantas empanadas salen de una tanda tipica</label>
+        </div>
+        <div class="row">
+          <input type="number" id="yieldEmp" min="0" value="0" placeholder="Ej: 50" oninput="saveRecipe()" style="max-width:120px;"/>
+        </div>
         <div id="recipeEmpInputs"></div>
       </div>
-
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="calcCost()">Calcular costos</button>
+        <button class="btn btn-primary" onclick="calcRecipeCost()">Calcular costo por unidad</button>
       </div>
-      <div id="costResult"></div>
+      <div id="recipeCostResult"></div>
+    </div>
+
+    <div class="card">
+      <h2>Costeo real por insumo (mensual)</h2>
+      <p class="hint-text">Esta es otra forma de ver el costo, mas fiel a la realidad: toma todo lo que compraste de cada insumo en un mes y lo divide por todas las pizzas+pizzetas (o empanadas) que efectivamente salieron ese mes. No depende de que la receta teorica sea exacta.</p>
+      <div class="month-selector">
+        <input type="month" id="realCostMonth"/>
+        <button class="btn btn-primary" onclick="renderRealCost()">Calcular</button>
+      </div>
+      <div id="realCostResult"></div>
     </div>
 
     <div class="card">
       <h2>Gastos generales</h2>
+      <p class="hint-text">Otros gastos del negocio que no son insumos de recetas (luz, gas, alquiler, sueldos, etc). Tambien entran en el balance mensual.</p>
       <div class="row">
         <input type="text" id="expName" placeholder="Descripcion"/>
         <input type="number" id="expAmt" placeholder="Monto $" min="0"/>
@@ -571,13 +622,14 @@ button:active{transform:scale(.96);}
     </div>
   </div>
 </div>
+
 </div>
 
 <script>
 const DB="https://delpuerto-72570-default-rtdb.firebaseio.com";
 const ADMIN_PASSWORD="delpuerto2024";
-
-const PIZZA_INGREDIENTS=[
+const WEEKDAYS=["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"];
+const PIZZA_INGREDIENTS_BASE=[
   {key:"harina",name:"Harina",unit:"kg"},
   {key:"aceite",name:"Aceite",unit:"lt"},
   {key:"levadura",name:"Levadura",unit:"g"},
@@ -585,55 +637,165 @@ const PIZZA_INGREDIENTS=[
   {key:"sorbato",name:"Sorbato de potasio",unit:"g"},
   {key:"sal",name:"Sal",unit:"g"},
   {key:"azucar",name:"Azucar",unit:"g"},
-  {key:"tomate",name:"Tomate (salsa)",unit:"kg"},
-  {key:"cebolla",name:"Cebolla",unit:"kg"},
-  {key:"oregano",name:"Oregano",unit:"g"},
+  {key:"oregano",name:"Oregano",unit:"g"}
+];
+/* Tomate y cebolla varian segun la variedad de pizza, se cargan por separado */
+const PIZZA_VARIETY_TOPPINGS=[
+  {variety:"tomate",varietyLabel:"Pizza de Tomate",items:[{key:"pt_tomate",name:"Tomate",unit:"g"}]},
+  {variety:"cebolla",varietyLabel:"Pizza de Cebolla",items:[{key:"pc_cebolla",name:"Cebolla",unit:"g"}]},
+  {variety:"mixta",varietyLabel:"Pizza Mixta",items:[{key:"pm_tomate",name:"Tomate",unit:"g"},{key:"pm_cebolla",name:"Cebolla",unit:"g"}]}
+];
+/* Insumos que se compran pero no entran en el costeo por unidad (embalaje) */
+const PACKAGING_INGREDIENTS=[
   {key:"bolsas",name:"Bolsas",unit:"u"},
   {key:"tinta",name:"Tinta + diluyente",unit:"ml"}
 ];
 const EMP_INGREDIENTS=[
-  {key:"e_harina",name:"Harina (tapas)",unit:"kg"},
+  {key:"e_tapas",name:"Tapas para empanadas",unit:"u"},
   {key:"e_carne",name:"Carne",unit:"kg"},
   {key:"e_jamon",name:"Jamon",unit:"kg"},
   {key:"e_queso",name:"Queso",unit:"kg"},
   {key:"e_cebolla",name:"Cebolla",unit:"kg"},
-  {key:"e_condimentos",name:"Condimentos",unit:"g"},
-  {key:"e_bolsas",name:"Bolsas",unit:"u"}
+  {key:"e_condimentos",name:"Condimentos",unit:"g"}
 ];
-const WEEKDAYS=["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"];
+/* Lista de insumos disponibles para elegir en el menu desplegable de Compras.
+   Cada uno tiene una unidad "de referencia" para expresar cuanto rinde la presentacion. */
+const PURCHASE_CATALOG=[
+  {key:"harina",name:"Harina",unit:"kg"},
+  {key:"aceite",name:"Aceite",unit:"lt"},
+  {key:"levadura",name:"Levadura",unit:"g"},
+  {key:"propcalc",name:"Propionato de calcio",unit:"g"},
+  {key:"sorbato",name:"Sorbato de potasio",unit:"g"},
+  {key:"sal",name:"Sal",unit:"g"},
+  {key:"azucar",name:"Azucar",unit:"g"},
+  {key:"tomate",name:"Tomate",unit:"g"},
+  {key:"cebolla",name:"Cebolla",unit:"g"},
+  {key:"oregano",name:"Oregano",unit:"g"},
+  {key:"bolsas",name:"Bolsas",unit:"u"},
+  {key:"tinta",name:"Tinta + diluyente",unit:"ml"},
+  {key:"e_tapas",name:"Tapas para empanadas",unit:"u"},
+  {key:"e_carne",name:"Carne (empanadas)",unit:"kg"},
+  {key:"e_jamon",name:"Jamon (empanadas)",unit:"kg"},
+  {key:"e_queso",name:"Queso (empanadas)",unit:"kg"},
+  {key:"e_cebolla",name:"Cebolla (empanadas)",unit:"kg"},
+  {key:"e_condimentos",name:"Condimentos (empanadas)",unit:"g"},
+  {key:"otro",name:"Otro insumo",unit:"u"}
+];
+const POLL_MS=4000;
 
+/* ================== SYNC (polling simple y robusto) ================== */
 function setSync(s,t){document.getElementById("syncDot").className="sync-dot "+s;document.getElementById("syncText").textContent=t;}
-async function fbSet(p,d){setSync("syncing","Guardando...");try{const r=await fetch(DB+"/"+p+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});setSync(r.ok?"connected":"","Sincronizado");return r.ok;}catch{setSync("","Sin conexion");return false;}}
-async function fbPush(p,d){setSync("syncing","Guardando...");try{const r=await fetch(DB+"/"+p+".json",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});if(r.ok){setSync("connected","Sincronizado");return(await r.json()).name;}setSync("","Error");return null;}catch{setSync("","Sin conexion");return null;}}
-async function fbDelete(p){setSync("syncing","Eliminando...");try{const r=await fetch(DB+"/"+p+".json",{method:"DELETE"});setSync(r.ok?"connected":"","Sincronizado");return r.ok;}catch{setSync("","Sin conexion");return false;}}
-async function fbPatch(p,d){setSync("syncing","Guardando...");try{const r=await fetch(DB+"/"+p+".json",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});setSync(r.ok?"connected":"","Sincronizado");return r.ok;}catch{setSync("","Sin conexion");return false;}}
 
-let oC={},cliC={},prodC={},batC={},clsC={},expC={},priceC={unit:0,empUnit:0},recC={},purchC={};
-
-function startListening(){
-  lp("orders",d=>{oC=d||{};renderOrders();});
-  lp("clients",d=>{cliC=d||{};renderClients();renderClientSelect();});
-  lp("production",d=>{if(d){prodC=d;applyProd();}});
-  lp("batches",d=>{batC=d||{};renderBatches();});
-  lp("closes",d=>{clsC=d||{};renderCloses();renderStats30();});
-  lp("expenses",d=>{expC=d||{};renderExpenses();});
-  lp("price",d=>{if(d){priceC=d;const eu=document.getElementById("prUnit");if(eu)eu.value=d.unit||0;const ee=document.getElementById("prEmpUnit");if(ee)ee.value=d.empUnit||0;}});
-  lp("recipe",d=>{if(d){recC=d;applyRecipe();}});
-  lp("purchases",d=>{purchC=d||{};renderPurchases();});
+async function fbGetAll(){
+  try{
+    const r=await fetch(DB+"/.json?ts="+Date.now());
+    if(!r.ok)throw new Error("bad status");
+    return await r.json();
+  }catch(err){throw err;}
 }
-function lp(path,cb){
-  const es=new EventSource(DB+"/"+path+".json");
-  es.addEventListener("put",e=>{try{cb(JSON.parse(e.data).data);}catch(err){}});
-  es.addEventListener("patch",e=>{try{const d=JSON.parse(e.data).data;if(d){const cur={orders:oC,clients:cliC,batches:batC,closes:clsC,expenses:expC,purchases:purchC}[path]||{};cb({...cur,...d});}}catch(err){}});
-  es.onerror=()=>setSync("","Sin conexion");
-  es.onopen=()=>setSync("connected","Sincronizado");
+async function fbSet(path,data){
+  setSync("syncing","Guardando...");
+  try{
+    const r=await fetch(DB+"/"+path+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    if(!r.ok)throw new Error("PUT failed");
+    setSync("connected","Sincronizado");
+    await refreshNow();
+    return true;
+  }catch(err){setSync("error","Error al guardar");return false;}
+}
+async function fbPush(path,data){
+  setSync("syncing","Guardando...");
+  try{
+    const r=await fetch(DB+"/"+path+".json",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    if(!r.ok)throw new Error("POST failed");
+    const j=await r.json();
+    setSync("connected","Sincronizado");
+    await refreshNow();
+    return j.name;
+  }catch(err){setSync("error","Error al guardar");return null;}
+}
+async function fbDelete(path){
+  setSync("syncing","Eliminando...");
+  try{
+    const r=await fetch(DB+"/"+path+".json",{method:"DELETE"});
+    if(!r.ok)throw new Error("DELETE failed");
+    setSync("connected","Sincronizado");
+    await refreshNow();
+    return true;
+  }catch(err){setSync("error","Error al eliminar");return false;}
+}
+async function fbPatch(path,data){
+  setSync("syncing","Guardando...");
+  try{
+    const r=await fetch(DB+"/"+path+".json",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    if(!r.ok)throw new Error("PATCH failed");
+    setSync("connected","Sincronizado");
+    await refreshNow();
+    return true;
+  }catch(err){setSync("error","Error al guardar");return false;}
 }
 
+let oC={},cliC={},prodC={},batC={},clsC={},expC={},priceC={unit:0,empUnit:0},purchC={},recC={};
+let pollTimer=null;
+let isPolling=false;
+
+async function refreshNow(){
+  if(isPolling)return;
+  isPolling=true;
+  try{
+    const data=await fbGetAll();
+    if(data){
+      oC=data.orders||{};
+      cliC=data.clients||{};
+      prodC=data.production||{};
+      batC=data.batches||{};
+      clsC=data.closes||{};
+      expC=data.expenses||{};
+      priceC=data.price||{unit:0,empUnit:0};
+      purchC=data.purchases||{};
+      recC=data.recipe||{};
+      renderAll();
+    }
+    setSync("connected","Sincronizado");
+  }catch(err){
+    setSync("error","Sin conexion");
+  }finally{
+    isPolling=false;
+  }
+}
+
+function renderAll(){
+  renderOrders();
+  renderClients();
+  renderClientSelect();
+  applyProd();
+  renderBatches();
+  renderCloses();
+  renderExpenses();
+  renderPurchases();
+  populatePurchaseSelect();
+  const eu=document.getElementById("prUnit");if(eu)eu.value=priceC.unit||0;
+  const ee=document.getElementById("prEmpUnit");if(ee)ee.value=priceC.empUnit||0;
+  if(document.getElementById("adminContent")&&document.getElementById("adminContent").style.display!=="none"){
+    renderStats30();
+    applyRecipe();
+  }
+}
+
+function startPolling(){
+  refreshNow();
+  pollTimer=setInterval(refreshNow,POLL_MS);
+}
+
+/* ================== TABS ================== */
 function switchTab(t){
   const tabs=["pedidos","produccion","historial","admin"];
   document.querySelectorAll(".tab").forEach((el,i)=>el.classList.toggle("active",tabs[i]===t));
   document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
   document.getElementById("panel-"+t).classList.add("active");
+  if(t==="admin"&&document.getElementById("adminContent").style.display!=="none"){
+    renderStats30();
+  }
 }
 
 function stepQty(id,delta){
@@ -648,21 +810,24 @@ function checkPwd(){
     document.getElementById("adminContent").style.display="block";
     document.getElementById("pwdError").textContent="";
     buildRecipeInputs();
+    populatePurchaseSelect();
     renderStats30();
   }else{document.getElementById("pwdError").textContent="Contrasena incorrecta.";}
 }
 function lockAdmin(){document.getElementById("adminLock").style.display="block";document.getElementById("adminContent").style.display="none";document.getElementById("adminPwd").value="";}
 
-/* CLIENTS */
+/* ================== CLIENTS ================== */
 async function addClient(){
   const name=document.getElementById("newClientName").value.trim();
   const addr=document.getElementById("newClientAddr").value.trim();
   const close=document.getElementById("newClientClose").value;
   if(!name)return;
-  await fbPush("clients",{name,addr,close,lastOrder:"",totalOrdered:0});
-  document.getElementById("newClientName").value="";
-  document.getElementById("newClientAddr").value="";
-  document.getElementById("newClientClose").value="";
+  const ok=await fbPush("clients",{name,addr,close,lastOrder:"",totalOrdered:0});
+  if(ok){
+    document.getElementById("newClientName").value="";
+    document.getElementById("newClientAddr").value="";
+    document.getElementById("newClientClose").value="";
+  }
 }
 async function deleteClient(k){if(!confirm("Eliminar este cliente?"))return;await fbDelete("clients/"+k);}
 async function editClient(k){
@@ -680,7 +845,7 @@ function renderClients(){
     const ca=cliC[a],cb=cliC[b];
     if(ca.close&&cb.close)return ca.close.localeCompare(cb.close);
     if(ca.close)return -1;if(cb.close)return 1;
-    return ca.name.localeCompare(cb.name);
+    return (ca.name||"").localeCompare(cb.name||"");
   });
   el.innerHTML=sorted.map(k=>{
     const c=cliC[k];
@@ -699,13 +864,13 @@ function renderClientSelect(){
     const ca=cliC[a],cb=cliC[b];
     if(ca.close&&cb.close)return ca.close.localeCompare(cb.close);
     if(ca.close)return -1;if(cb.close)return 1;
-    return ca.name.localeCompare(cb.name);
+    return (ca.name||"").localeCompare(cb.name||"");
   });
   sel.innerHTML='<option value="">Seleccionar cliente</option>'+keys.map(k=>'<option value="'+k+'">'+cliC[k].name+(cliC[k].close?" - cierra "+cliC[k].close:"")+'</option>').join("");
   if(cur&&cliC[cur])sel.value=cur;
 }
 
-/* ORDERS */
+/* ================== ORDERS ================== */
 async function addOrder(){
   const ck=document.getElementById("clientSelect").value;
   if(!ck){alert("Selecciona un cliente.");return;}
@@ -717,12 +882,27 @@ async function addOrder(){
   const car=Math.max(0,parseInt(document.getElementById("qCarne").value)||0);
   const jq=Math.max(0,parseInt(document.getElementById("qJyq").value)||0);
   if(t+ce+m+p+car+jq===0){alert("Ingresa al menos un producto.");return;}
+
+  const ncT=Math.min(t,Math.max(0,parseInt(document.getElementById("ncTomate").value)||0));
+  const ncCe=Math.min(ce,Math.max(0,parseInt(document.getElementById("ncCebolla").value)||0));
+  const ncM=Math.min(m,Math.max(0,parseInt(document.getElementById("ncMixta").value)||0));
+  const ncP=Math.min(p,Math.max(0,parseInt(document.getElementById("ncPizzeta").value)||0));
+  const ncCar=Math.min(car,Math.max(0,parseInt(document.getElementById("ncCarne").value)||0));
+  const ncJq=Math.min(jq,Math.max(0,parseInt(document.getElementById("ncJyq").value)||0));
+
   const now=new Date();
   const today=now.toLocaleDateString("es-AR");
-  await fbPush("orders",{name:cli.name,addr:cli.addr||"",close:cli.close||"",tomate:t,cebolla:ce,mixta:m,pizzeta:p,carne:car,jyq:jq,priority:false,ts:now.getTime(),clientKey:ck,weekday:now.getDay()});
-  await fbPatch("clients/"+ck,{lastOrder:today,totalOrdered:(cli.totalOrdered||0)+t+ce+m+p+car+jq});
-  document.getElementById("clientSelect").value="";
-  ["qTomate","qCebolla","qMixta","qPizzeta","qCarne","qJyq"].forEach(id=>document.getElementById(id).value="0");
+  const ok=await fbPush("orders",{
+    name:cli.name,addr:cli.addr||"",close:cli.close||"",
+    tomate:t,cebolla:ce,mixta:m,pizzeta:p,carne:car,jyq:jq,
+    ncTomate:ncT,ncCebolla:ncCe,ncMixta:ncM,ncPizzeta:ncP,ncCarne:ncCar,ncJyq:ncJq,
+    priority:false,ts:now.getTime(),clientKey:ck,weekday:now.getDay()
+  });
+  if(ok){
+    await fbPatch("clients/"+ck,{lastOrder:today,totalOrdered:(cli.totalOrdered||0)+t+ce+m+p+car+jq});
+    document.getElementById("clientSelect").value="";
+    ["qTomate","qCebolla","qMixta","qPizzeta","qCarne","qJyq","ncTomate","ncCebolla","ncMixta","ncPizzeta","ncCarne","ncJyq"].forEach(id=>document.getElementById(id).value="0");
+  }
 }
 async function deleteOrder(k){await fbDelete("orders/"+k);}
 async function togglePriority(k){const o=oC[k];if(o)await fbPatch("orders/"+k,{priority:!o.priority});}
@@ -733,7 +913,7 @@ async function clearOrders(){
 }
 
 function renderOrders(){
-  const list=document.getElementById("orderList");
+  const list=document.getElementById("orderList");if(!list)return;
   const keys=Object.keys(oC).filter(k=>oC[k]&&oC[k].name);
   if(!keys.length){list.innerHTML='<div class="empty">Aun no hay pedidos cargados.</div>';updateSummary([]);return;}
   const sorted=keys.sort((a,b)=>{
@@ -752,16 +932,19 @@ function renderOrders(){
     if(o.pizzeta)chips.push('<span class="ov-chip pizzeta"><span class="chip-qty">'+o.pizzeta+'</span> Pizzeta</span>');
     if(o.carne)chips.push('<span class="ov-chip carne"><span class="chip-qty">'+o.carne+'</span> Emp. Carne</span>');
     if(o.jyq)chips.push('<span class="ov-chip jyq"><span class="chip-qty">'+o.jyq+'</span> Emp. J&amp;Q</span>');
+    const ncTotal=(o.ncTomate||0)+(o.ncCebolla||0)+(o.ncMixta||0)+(o.ncPizzeta||0)+(o.ncCarne||0)+(o.ncJyq||0);
+    if(ncTotal>0)chips.push('<span class="ov-chip nocost"><span class="chip-qty">'+ncTotal+'</span> sin costo</span>');
     return '<div class="order-item'+(o.priority?' priority':'')+'"><div class="order-header"><span class="order-num">'+(i+1)+'</span>'+(o.priority?'<span style="color:var(--accent2);font-weight:700;">PRIO</span>':'')+'<span class="order-name">'+o.name+'</span>'+(o.close?'<span class="order-meta">Cierra '+o.close+'</span>':'')+'<button class="priority-toggle no-print '+(o.priority?'on':'')+'" onclick="togglePriority(\''+k+'\')">'+(o.priority?'Prioritario':'Marcar prioritario')+'</button><button class="btn-icon no-print" onclick="deleteOrder(\''+k+'\')">X</button></div><div class="order-varieties">'+chips.join("")+'</div></div>';
   }).join("");
   updateSummary(keys.map(k=>oC[k]));
 }
 
 function updateSummary(orders){
-  let tc=0,tce=0,tm=0,tpz=0,tcar=0,tjq=0,ptc=0,ptce=0,ptm=0,ptpz=0,ptcar=0,ptjq=0,hasPri=false;
+  let tc=0,tce=0,tm=0,tpz=0,tcar=0,tjq=0,ptc=0,ptce=0,ptm=0,ptpz=0,ptcar=0,ptjq=0,hasPri=false,ncTotal=0;
   const cset=new Set();
   orders.forEach(o=>{
     tc+=o.tomate||0;tce+=o.cebolla||0;tm+=o.mixta||0;tpz+=o.pizzeta||0;tcar+=o.carne||0;tjq+=o.jyq||0;
+    ncTotal+=(o.ncTomate||0)+(o.ncCebolla||0)+(o.ncMixta||0)+(o.ncPizzeta||0)+(o.ncCarne||0)+(o.ncJyq||0);
     if(o.clientKey)cset.add(o.clientKey);
     if(o.priority){ptc+=o.tomate||0;ptce+=o.cebolla||0;ptm+=o.mixta||0;ptpz+=o.pizzeta||0;ptcar+=o.carne||0;ptjq+=o.jyq||0;hasPri=true;}
   });
@@ -773,14 +956,16 @@ function updateSummary(orders){
   document.getElementById("sumTotal").textContent=tc+tce+tm;
   document.getElementById("sumPizzeta").textContent=tpz;
   document.getElementById("sumEmpanadas").textContent=tcar+tjq;
-  document.getElementById("sumAll").textContent=tc+tce+tm+tpz+tcar+tjq;
+  document.getElementById("sumAll").textContent=tc+tce+tm+tpz;
   document.getElementById("clientCount").textContent=cset.size||orders.length;
+  const nch=document.getElementById("noCostHint");
+  if(ncTotal>0){nch.style.display="block";document.getElementById("noCostTotal").textContent=ncTotal;}else{nch.style.display="none";}
   const ps=document.getElementById("prioritySummary");ps.style.display=hasPri?"":"none";
   document.getElementById("pSumTomate").textContent=ptc;document.getElementById("pSumCebolla").textContent=ptce;document.getElementById("pSumMixta").textContent=ptm;document.getElementById("pSumPizzeta").textContent=ptpz;document.getElementById("pSumCarne").textContent=ptcar;document.getElementById("pSumJyq").textContent=ptjq;
   renderProduction();
 }
 
-/* PRODUCTION */
+/* ================== PRODUCTION ================== */
 let prodTimer=null;
 function saveProd(){
   clearTimeout(prodTimer);
@@ -792,7 +977,10 @@ function saveProd(){
   },600);renderProduction();
 }
 function applyProd(){
-  ["hTomate","hCebolla","hMixta","hPizzeta","hCarne","hJyq","aTomate","aCebolla","aMixta","aPizzeta","aCarne","aJyq"].forEach(id=>{const el=document.getElementById(id);if(el)el.value=prodC[id]||0;});
+  ["hTomate","hCebolla","hMixta","hPizzeta","hCarne","hJyq","aTomate","aCebolla","aMixta","aPizzeta","aCarne","aJyq"].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&document.activeElement!==el)el.value=prodC[id]||0;
+  });
   renderProduction();
 }
 function renderProduction(){
@@ -807,7 +995,7 @@ function renderProduction(){
   ar("remTotal",rP,"#7ab050");ar("remPizzetaTotal",rPz,"#7090d0");ar("remEmpTotal",rEmp,"#ffb060");
 }
 
-/* BATCHES */
+/* ================== BATCHES ================== */
 let currentBatchType="pizza";
 function setBatchType(t){
   currentBatchType=t;
@@ -815,27 +1003,33 @@ function setBatchType(t){
   document.getElementById("batchTypeEmp").classList.toggle("active",t==="empanada");
   document.getElementById("batchPizzaInputs").style.display=t==="pizza"?"grid":"none";
   document.getElementById("batchEmpInputs").style.display=t==="empanada"?"grid":"none";
+  document.getElementById("batchPizzaInputs").style.gridTemplateColumns=t==="pizza"?"repeat(4,1fr)":"";
 }
 async function addBatch(){
   const time=document.getElementById("batchTime").value||new Date().toTimeString().slice(0,5);
   if(currentBatchType==="pizza"){
     const t=Math.max(0,+document.getElementById("bTomate").value||0),ce=Math.max(0,+document.getElementById("bCebolla").value||0),m=Math.max(0,+document.getElementById("bMixta").value||0),p=Math.max(0,+document.getElementById("bPizzeta").value||0);
     if(t+ce+m+p===0){alert("Ingresa al menos una pizza.");return;}
-    await fbPush("batches",{time,type:"pizza",tomate:t,cebolla:ce,mixta:m,pizzeta:p,ts:Date.now()});
-    ["bTomate","bCebolla","bMixta","bPizzeta"].forEach(id=>document.getElementById(id).value="0");
-    document.getElementById("aTomate").value=(+document.getElementById("aTomate").value)+t;
-    document.getElementById("aCebolla").value=(+document.getElementById("aCebolla").value)+ce;
-    document.getElementById("aMixta").value=(+document.getElementById("aMixta").value)+m;
-    document.getElementById("aPizzeta").value=(+document.getElementById("aPizzeta").value)+p;
+    const ok=await fbPush("batches",{time,type:"pizza",tomate:t,cebolla:ce,mixta:m,pizzeta:p,ts:Date.now()});
+    if(ok){
+      ["bTomate","bCebolla","bMixta","bPizzeta"].forEach(id=>document.getElementById(id).value="0");
+      document.getElementById("aTomate").value=(+document.getElementById("aTomate").value)+t;
+      document.getElementById("aCebolla").value=(+document.getElementById("aCebolla").value)+ce;
+      document.getElementById("aMixta").value=(+document.getElementById("aMixta").value)+m;
+      document.getElementById("aPizzeta").value=(+document.getElementById("aPizzeta").value)+p;
+      saveProd();
+    }
   }else{
     const car=Math.max(0,+document.getElementById("bCarne").value||0),jq=Math.max(0,+document.getElementById("bJyq").value||0);
     if(car+jq===0){alert("Ingresa al menos una empanada.");return;}
-    await fbPush("batches",{time,type:"empanada",carne:car,jyq:jq,ts:Date.now()});
-    ["bCarne","bJyq"].forEach(id=>document.getElementById(id).value="0");
-    document.getElementById("aCarne").value=(+document.getElementById("aCarne").value)+car;
-    document.getElementById("aJyq").value=(+document.getElementById("aJyq").value)+jq;
+    const ok=await fbPush("batches",{time,type:"empanada",carne:car,jyq:jq,ts:Date.now()});
+    if(ok){
+      ["bCarne","bJyq"].forEach(id=>document.getElementById(id).value="0");
+      document.getElementById("aCarne").value=(+document.getElementById("aCarne").value)+car;
+      document.getElementById("aJyq").value=(+document.getElementById("aJyq").value)+jq;
+      saveProd();
+    }
   }
-  saveProd();
 }
 async function deleteBatch(k){await fbDelete("batches/"+k);}
 function renderBatches(){
@@ -858,13 +1052,14 @@ function renderBatches(){
   }).join("");
 }
 
-/* DAILY CLOSE */
+/* ================== DAILY CLOSE ================== */
 async function doClose(){
   const orders=Object.values(oC).filter(o=>o&&o.name);if(!orders.length)return;
-  let tc=0,tce=0,tm=0,tpz=0,tcar=0,tjq=0;const cset=new Set();
+  let tc=0,tce=0,tm=0,tpz=0,tcar=0,tjq=0,ncTotal=0;const cset=new Set();
   const clientTotals={};
   orders.forEach(o=>{
     tc+=o.tomate||0;tce+=o.cebolla||0;tm+=o.mixta||0;tpz+=o.pizzeta||0;tcar+=o.carne||0;tjq+=o.jyq||0;
+    ncTotal+=(o.ncTomate||0)+(o.ncCebolla||0)+(o.ncMixta||0)+(o.ncPizzeta||0)+(o.ncCarne||0)+(o.ncJyq||0);
     if(o.clientKey){
       cset.add(o.clientKey);
       const tot=(o.tomate||0)+(o.cebolla||0)+(o.mixta||0)+(o.pizzeta||0);
@@ -882,11 +1077,11 @@ async function doClose(){
     amasadoTomate:aT,amasadoCebolla:aCe,amasadoMixta:aM,amasadoPizzeta:aPz,amasadoCarne:aCar,amasadoJyq:aJq,
     totalPizzas:tc+tce+tm+tpz,totalEmpanadas:tcar+tjq,totalPedidos:tc+tce+tm+tpz+tcar+tjq,
     totalAmasado:aT+aCe+aM+aPz+aCar+aJq,clientCount:cset.size||orders.length,
+    noCostTotal:ncTotal,
     clientTotals
   });
   await fbSet("orders",null);await fbSet("batches",null);
   await fbSet("production",{hTomate:0,hCebolla:0,hMixta:0,hPizzeta:0,hCarne:0,hJyq:0,aTomate:0,aCebolla:0,aMixta:0,aPizzeta:0,aCarne:0,aJyq:0});
-  ["hTomate","hCebolla","hMixta","hPizzeta","hCarne","hJyq","aTomate","aCebolla","aMixta","aPizzeta","aCarne","aJyq"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="0";});
 }
 async function manualClose(){if(!confirm("Hacer cierre del dia? Se guardan los totales y se limpian los pedidos."))return;await doClose();}
 function renderCloses(){
@@ -902,17 +1097,18 @@ function renderCloses(){
     if(c.pedidosPizzeta)chips.push('<span class="ov-chip pizzeta"><span class="chip-qty">'+c.pedidosPizzeta+'</span> Piz.</span>');
     if(c.pedidosCarne)chips.push('<span class="ov-chip carne"><span class="chip-qty">'+c.pedidosCarne+'</span> Carne</span>');
     if(c.pedidosJyq)chips.push('<span class="ov-chip jyq"><span class="chip-qty">'+c.pedidosJyq+'</span> J&amp;Q</span>');
+    if(c.noCostTotal)chips.push('<span class="ov-chip nocost"><span class="chip-qty">'+c.noCostTotal+'</span> sin costo</span>');
     return '<div class="close-item"><div class="cdate">'+c.date+'</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:5px;">Pizzas: '+(c.totalPizzas||0)+' | Empanadas: '+(c.totalEmpanadas||0)+' | Clientes: '+(c.clientCount||0)+'</div><div class="close-chips">'+chips.join("")+'</div></div>';
   }).join("");
 }
 function scheduleAutoClose(){const now=new Date(),midnight=new Date(now);midnight.setHours(24,0,0,0);setTimeout(async()=>{await doClose();scheduleAutoClose();},midnight-now);}
 
-/* EXPENSES */
+/* ================== EXPENSES ================== */
 async function addExpense(){
   const name=document.getElementById("expName").value.trim(),amt=parseFloat(document.getElementById("expAmt").value)||0,date=document.getElementById("expDate").value||new Date().toISOString().slice(0,10);
   if(!name||amt<=0){alert("Completa descripcion y monto.");return;}
-  await fbPush("expenses",{name,amt,date,ts:Date.now()});
-  document.getElementById("expName").value="";document.getElementById("expAmt").value="";
+  const ok=await fbPush("expenses",{name,amt,date,ts:Date.now()});
+  if(ok){document.getElementById("expName").value="";document.getElementById("expAmt").value="";}
 }
 async function deleteExpense(k){if(!confirm("Eliminar?"))return;await fbDelete("expenses/"+k);}
 function renderExpenses(){
@@ -924,121 +1120,260 @@ function renderExpenses(){
   }).join("");
 }
 
-/* PRICE */
+/* ================== PRICE ================== */
 let priceTimer=null;
 function savePrice(){
   clearTimeout(priceTimer);
   priceTimer=setTimeout(async()=>{await fbSet("price",{unit:parseFloat(document.getElementById("prUnit").value)||0,empUnit:parseFloat(document.getElementById("prEmpUnit").value)||0});},800);
 }
 
-/* PURCHASES */
+/* ================== PURCHASES ================== */
+function populatePurchaseSelect(){
+  const sel=document.getElementById("purchIngredient");if(!sel)return;
+  if(sel.options.length>1)return;
+  sel.innerHTML='<option value="">Elegi un insumo</option>'+PURCHASE_CATALOG.map(p=>'<option value="'+p.key+'">'+p.name+'</option>').join("");
+}
+function onPurchIngredientChange(){
+  const key=document.getElementById("purchIngredient").value;
+  const info=PURCHASE_CATALOG.find(p=>p.key===key);
+  document.getElementById("purchOtherName").style.display=key==="otro"?"":"none";
+  document.getElementById("purchYieldUnitLabel").textContent=info?info.unit:"";
+}
 async function addPurchase(){
-  const name=document.getElementById("purchName").value.trim();
-  const qty=parseFloat(document.getElementById("purchQty").value)||0;
-  const unit=document.getElementById("purchUnit").value;
+  const key=document.getElementById("purchIngredient").value;
+  if(!key){alert("Elegi un insumo de la lista.");return;}
+  let name=PURCHASE_CATALOG.find(p=>p.key===key)?.name||"";
+  if(key==="otro"){
+    const otherName=document.getElementById("purchOtherName").value.trim();
+    if(!otherName){alert("Escribi el nombre del insumo.");return;}
+    name=otherName;
+  }
+  const presentations=parseFloat(document.getElementById("purchPresentations").value)||0;
+  const yieldEach=parseFloat(document.getElementById("purchYieldEach").value)||0;
   const price=parseFloat(document.getElementById("purchPrice").value)||0;
-  if(!name||qty<=0||price<=0){alert("Completa todos los campos.");return;}
-  await fbPush("purchases",{name,qty,unit,price,unitCost:price/qty,ts:Date.now()});
-  document.getElementById("purchName").value="";document.getElementById("purchQty").value="";document.getElementById("purchPrice").value="";
+  const date=document.getElementById("purchDate").value||new Date().toISOString().slice(0,10);
+  if(presentations<=0||yieldEach<=0||price<=0){alert("Completa cantidad comprada, cuanto rinde cada una, y el precio.");return;}
+  const totalQty=presentations*yieldEach;
+  const info=PURCHASE_CATALOG.find(p=>p.key===key);
+  const ok=await fbPush("purchases",{ingredientKey:key,name,presentations,yieldEach,unit:info?info.unit:"u",totalQty,price,unitCost:price/totalQty,date,ts:Date.now()});
+  if(ok){
+    document.getElementById("purchIngredient").value="";
+    document.getElementById("purchOtherName").value="";
+    document.getElementById("purchPresentations").value="";
+    document.getElementById("purchYieldEach").value="";
+    document.getElementById("purchPrice").value="";
+    onPurchIngredientChange();
+  }
 }
 async function deletePurchase(k){if(!confirm("Eliminar?"))return;await fbDelete("purchases/"+k);}
 function renderPurchases(){
   const list=document.getElementById("purchaseList");if(!list)return;
   const keys=Object.keys(purchC);
   if(!keys.length){list.innerHTML='<div class="empty">No hay compras registradas.</div>';return;}
-  list.innerHTML=keys.sort((a,b)=>(purchC[b].ts||0)-(purchC[a].ts||0)).map(k=>{
+  list.innerHTML=keys.sort((a,b)=>(purchC[b].ts||0)-(purchC[a].ts||0)).slice(0,50).map(k=>{
     const p=purchC[k];
-    return '<div class="purchase-row"><span class="pname">'+p.name+'</span><span class="pdetail">'+p.qty+' '+p.unit+' por $'+p.price.toLocaleString("es-AR")+'</span><span class="pamt">$'+p.unitCost.toFixed(2)+'/'+p.unit+'</span><button class="btn-icon" onclick="deletePurchase(\''+k+'\')">X</button></div>';
+    const detail=p.presentations&&p.yieldEach?(p.presentations+' x '+p.yieldEach+' '+p.unit+' = '+p.totalQty+' '+p.unit):((p.qty||0)+' '+(p.unit||''));
+    return '<div class="purchase-row"><span class="pname">'+p.name+'</span><span class="pdetail">'+detail+' - '+(p.date||'')+'</span><span class="pamt">$'+Number(p.price).toLocaleString("es-AR")+'</span><button class="btn-icon" onclick="deletePurchase(\''+k+'\')">X</button></div>';
   }).join("");
 }
-function findPurchaseCost(ingredientName){
-  const keys=Object.keys(purchC);
-  const match=keys.find(k=>purchC[k].name.toLowerCase().includes(ingredientName.toLowerCase())||ingredientName.toLowerCase().includes(purchC[k].name.toLowerCase()));
-  return match?purchC[match].unitCost:0;
+/* Costo por unidad de medida de un insumo, en base a la compra mas reciente */
+function findIngredientUnitCost(ingredientKey){
+  const keys=Object.keys(purchC).filter(k=>purchC[k].ingredientKey===ingredientKey);
+  if(!keys.length)return 0;
+  keys.sort((a,b)=>(purchC[b].ts||0)-(purchC[a].ts||0));
+  const p=purchC[keys[0]];
+  return p.unitCost||0;
 }
 
-/* RECIPE */
+/* ================== RECIPE / COSTEO POR UNIDAD (teorico) ================== */
 function buildRecipeInputs(){
-  const pEl=document.getElementById("recipePizzaInputs");
+  const pEl=document.getElementById("recipePizzaBaseInputs");
+  const vEl=document.getElementById("recipeVarietyInputs");
   const eEl=document.getElementById("recipeEmpInputs");
-  if(pEl)pEl.innerHTML='<div class="recipe-grid">'+PIZZA_INGREDIENTS.map(ing=>{
+  if(pEl)pEl.innerHTML='<div class="recipe-grid">'+PIZZA_INGREDIENTS_BASE.map(ing=>{
     const qty=recC[ing.key+"_qty"]||0;
-    return '<div class="recipe-item"><span class="riname">'+ing.name+'</span><div class="ri-row"><input type="number" id="rq_'+ing.key+'" min="0" step="0.001" value="'+qty+'" placeholder="Cant." oninput="saveRecipe()"/><span class="riunit">'+ing.unit+'</span></div></div>';
+    return '<div class="recipe-item"><span class="riname">'+ing.name+'</span><div class="ri-row"><input type="number" id="rq_'+ing.key+'" min="0" step="0.001" value="'+qty+'" placeholder="Cant." oninput="saveRecipe()"/><span class="riunit">'+ing.unit+' por tanda</span></div></div>';
   }).join("")+'</div>';
+  if(vEl)vEl.innerHTML=PIZZA_VARIETY_TOPPINGS.map(v=>{
+    const itemsHtml=v.items.map(ing=>{
+      const qty=recC[ing.key+"_qty"]||0;
+      return '<div class="recipe-item"><span class="riname">'+ing.name+'</span><div class="ri-row"><input type="number" id="rq_'+ing.key+'" min="0" step="0.001" value="'+qty+'" placeholder="Cant." oninput="saveRecipe()"/><span class="riunit">'+ing.unit+' por pizza</span></div></div>';
+    }).join("");
+    return '<div style="margin-bottom:10px;"><div style="font-size:.8rem;color:var(--muted);font-weight:600;margin-bottom:5px;">'+v.varietyLabel+'</div><div class="recipe-grid">'+itemsHtml+'</div></div>';
+  }).join("");
   if(eEl)eEl.innerHTML='<div class="recipe-grid">'+EMP_INGREDIENTS.map(ing=>{
     const qty=recC[ing.key+"_qty"]||0;
-    return '<div class="recipe-item"><span class="riname">'+ing.name+'</span><div class="ri-row"><input type="number" id="rq_'+ing.key+'" min="0" step="0.001" value="'+qty+'" placeholder="Cant." oninput="saveRecipe()"/><span class="riunit">'+ing.unit+'</span></div></div>';
+    return '<div class="recipe-item"><span class="riname">'+ing.name+'</span><div class="ri-row"><input type="number" id="rq_'+ing.key+'" min="0" step="0.001" value="'+qty+'" placeholder="Cant." oninput="saveRecipe()"/><span class="riunit">'+ing.unit+' por tanda</span></div></div>';
   }).join("")+'</div>';
   const yp=document.getElementById("yieldPizza");if(yp)yp.value=recC.yieldPizza||0;
   const ye=document.getElementById("yieldEmp");if(ye)ye.value=recC.yieldEmp||0;
+}
+function allRecipeKeys(){
+  return [...PIZZA_INGREDIENTS_BASE,...PIZZA_VARIETY_TOPPINGS.flatMap(v=>v.items),...EMP_INGREDIENTS];
+}
+function applyRecipe(){
+  if(!document.getElementById("recipePizzaBaseInputs"))return;
+  if(!document.getElementById("recipePizzaBaseInputs").innerHTML)buildRecipeInputs();
+  allRecipeKeys().forEach(i=>{
+    const qe=document.getElementById("rq_"+i.key);
+    if(qe&&document.activeElement!==qe)qe.value=recC[i.key+"_qty"]||0;
+  });
+  const yp=document.getElementById("yieldPizza");if(yp&&document.activeElement!==yp)yp.value=recC.yieldPizza||0;
+  const ye=document.getElementById("yieldEmp");if(ye&&document.activeElement!==ye)ye.value=recC.yieldEmp||0;
 }
 let recTimer=null;
 function saveRecipe(){
   clearTimeout(recTimer);
   recTimer=setTimeout(async()=>{
     const d={yieldPizza:+document.getElementById("yieldPizza").value||0,yieldEmp:+document.getElementById("yieldEmp").value||0};
-    [...PIZZA_INGREDIENTS,...EMP_INGREDIENTS].forEach(i=>{d[i.key+"_qty"]=parseFloat(document.getElementById("rq_"+i.key)?.value)||0;});
+    allRecipeKeys().forEach(i=>{d[i.key+"_qty"]=parseFloat(document.getElementById("rq_"+i.key)?.value)||0;});
     await fbSet("recipe",d);
   },800);
 }
-function applyRecipe(){
-  [...PIZZA_INGREDIENTS,...EMP_INGREDIENTS].forEach(i=>{const qe=document.getElementById("rq_"+i.key);if(qe)qe.value=recC[i.key+"_qty"]||0;});
-  const yp=document.getElementById("yieldPizza");if(yp)yp.value=recC.yieldPizza||0;
-  const ye=document.getElementById("yieldEmp");if(ye)ye.value=recC.yieldEmp||0;
-}
-function calcCost(){
-  let pizzaTotal=0;const pizzaLines=[];
-  PIZZA_INGREDIENTS.forEach(i=>{
+function calcRecipeCost(){
+  /* Costo base (por tanda completa, se reparte entre todas las pizzas de la tanda) */
+  let baseTotal=0;const baseLines=[];
+  PIZZA_INGREDIENTS_BASE.forEach(i=>{
     const q=parseFloat(document.getElementById("rq_"+i.key)?.value)||0;
-    const cost=findPurchaseCost(i.name.split(" ")[0]);
-    const sub=q*cost;
-    if(q>0){pizzaLines.push('<div class="cost-line"><span>'+i.name+' ('+q+' '+i.unit+')</span><span>$'+sub.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></div>');pizzaTotal+=sub;}
+    if(q<=0)return;
+    const unitCost=findIngredientUnitCost(i.key);
+    const sub=q*unitCost;
+    baseLines.push('<div class="cost-line"><span>'+i.name+' ('+q+' '+i.unit+' x tanda)</span><span>'+(unitCost>0?'$'+sub.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2}):'sin compra cargada')+'</span></div>');
+    baseTotal+=sub;
   });
-  const yieldP=+document.getElementById("yieldPizza").value||1;
-  const perPizza=yieldP>0?pizzaTotal/yieldP:0;
-  const puPizza=priceC.unit||0;
-  const marginPizza=puPizza>0?((puPizza-perPizza)/puPizza*100):0;
+  const yieldP=+document.getElementById("yieldPizza").value||0;
+  const baseCostPerPizza=yieldP>0?baseTotal/yieldP:0;
 
+  /* Costo de aderezo (por pizza, segun variedad) */
+  const varietyCosts={};
+  PIZZA_VARIETY_TOPPINGS.forEach(v=>{
+    let vc=0;const vLines=[];
+    v.items.forEach(i=>{
+      const q=parseFloat(document.getElementById("rq_"+i.key)?.value)||0;
+      if(q<=0)return;
+      const unitCost=findIngredientUnitCost(i.key.includes("tomate")?"tomate":"cebolla");
+      const sub=q*unitCost;
+      vLines.push('<div class="cost-line"><span>'+i.name+' ('+q+' '+i.unit+')</span><span>'+(unitCost>0?'$'+sub.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2}):'sin compra cargada')+'</span></div>');
+      vc+=sub;
+    });
+    varietyCosts[v.variety]={cost:vc,lines:vLines,label:v.varietyLabel};
+  });
+
+  const puPizza=priceC.unit||0;
+  let pizzaHtml='<div class="cost-result"><h4>Costo Pizzas (base + aderezo segun variedad)</h4>';
+  pizzaHtml+='<div style="font-size:.78rem;color:var(--muted);font-weight:600;margin-bottom:4px;">Masa base (tanda de '+(yieldP||"?")+' unidades)</div>';
+  pizzaHtml+=baseLines.join("")||'<div class="cost-line">Sin datos cargados</div>';
+  pizzaHtml+='<div class="cost-line bold"><span>Costo de masa por pizza</span><span>'+(yieldP>0?'$'+baseCostPerPizza.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2}):'falta indicar rendimiento')+'</span></div>';
+  Object.keys(varietyCosts).forEach(vk=>{
+    const vc=varietyCosts[vk];
+    if(!vc.lines.length)return;
+    const totalVariety=baseCostPerPizza+vc.cost;
+    pizzaHtml+='<div style="font-size:.78rem;color:var(--muted);font-weight:600;margin:8px 0 4px;">'+vc.label+'</div>';
+    pizzaHtml+=vc.lines.join("");
+    pizzaHtml+='<div class="cost-line bold"><span>Costo total ('+vc.label+')</span><span>$'+totalVariety.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></div>';
+    if(puPizza>0){
+      const margin=((puPizza-totalVariety)/puPizza*100);
+      pizzaHtml+='<div class="cost-line"><span>Margen vs precio $'+puPizza+'</span><span style="color:'+(margin>=0?'var(--green-text)':'var(--red)')+'">'+margin.toFixed(1)+'%</span></div>';
+    }
+  });
+  pizzaHtml+='</div>';
+
+  /* Empanadas */
   let empTotal=0;const empLines=[];
   EMP_INGREDIENTS.forEach(i=>{
     const q=parseFloat(document.getElementById("rq_"+i.key)?.value)||0;
-    const searchName=i.name.split(" ")[0].replace("(tapas)","").trim();
-    const cost=findPurchaseCost(searchName);
-    const sub=q*cost;
-    if(q>0){empLines.push('<div class="cost-line"><span>'+i.name+' ('+q+' '+i.unit+')</span><span>$'+sub.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></div>');empTotal+=sub;}
+    if(q<=0)return;
+    const unitCost=findIngredientUnitCost(i.key);
+    const sub=q*unitCost;
+    empLines.push('<div class="cost-line"><span>'+i.name+' ('+q+' '+i.unit+')</span><span>'+(unitCost>0?'$'+sub.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2}):'sin compra cargada')+'</span></div>');
+    empTotal+=sub;
   });
-  const yieldE=+document.getElementById("yieldEmp").value||1;
+  const yieldE=+document.getElementById("yieldEmp").value||0;
   const perEmp=yieldE>0?empTotal/yieldE:0;
   const puEmp=priceC.empUnit||0;
   const marginEmp=puEmp>0?((puEmp-perEmp)/puEmp*100):0;
 
-  document.getElementById("costResult").innerHTML=
-    '<div class="cost-result"><h4>Costo Pizzas (tanda de '+yieldP+' unidades)</h4>'+pizzaLines.join("")+
-    '<div class="cost-line bold"><span>Total tanda</span><span>$'+pizzaTotal.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></div>'+
-    '<div class="cost-line bold"><span>Costo por pizza</span><span>$'+perPizza.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></div>'+
-    (puPizza>0?'<div class="cost-line"><span>Precio de venta</span><span>$'+puPizza.toLocaleString("es-AR")+'</span></div><div class="cost-line"><span>Margen</span><span style="color:'+(marginPizza>=0?'var(--green-text)':'var(--red)')+'">'+marginPizza.toFixed(1)+'%</span></div>':'')+
-    '</div>'+
-    '<div class="cost-result"><h4>Costo Empanadas (tanda de '+yieldE+' unidades)</h4>'+empLines.join("")+
+  let empHtml="";
+  if(empLines.length){
+    empHtml='<div class="cost-result"><h4>Costo Empanadas (tanda de '+(yieldE||"?")+' unidades)</h4>'+empLines.join("")+
     '<div class="cost-line bold"><span>Total tanda</span><span>$'+empTotal.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></div>'+
-    '<div class="cost-line bold"><span>Costo por empanada</span><span>$'+perEmp.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></div>'+
-    (puEmp>0?'<div class="cost-line"><span>Precio de venta</span><span>$'+puEmp.toLocaleString("es-AR")+'</span></div><div class="cost-line"><span>Margen</span><span style="color:'+(marginEmp>=0?'var(--green-text)':'var(--red)')+'">'+marginEmp.toFixed(1)+'%</span></div>':'')+
+    (yieldE>0?'<div class="cost-line bold"><span>Costo por empanada</span><span>$'+perEmp.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></div>':'<div class="cost-line" style="color:var(--nocost-text)">Falta indicar cuantas empanadas salen de la tanda</div>')+
+    (puEmp>0&&yieldE>0?'<div class="cost-line"><span>Precio de venta</span><span>$'+puEmp.toLocaleString("es-AR")+'</span></div><div class="cost-line"><span>Margen</span><span style="color:'+(marginEmp>=0?'var(--green-text)':'var(--red)')+'">'+marginEmp.toFixed(1)+'%</span></div>':'')+
     '</div>';
+  }
+
+  document.getElementById("recipeCostResult").innerHTML=pizzaHtml+empHtml;
 }
 
-/* STATS 30 DIAS */
+/* ================== COSTEO REAL POR INSUMO (compras del mes / produccion del mes) ================== */
+function calcRealCostPerIngredient(month){
+  const[yr,mo]=month.split("-");
+  const purchasesInMonth=Object.values(purchC).filter(p=>{if(!p.date)return false;const[py,pm]=p.date.split("-");return py===yr&&pm===mo;});
+  if(!purchasesInMonth.length)return null;
+
+  const closes=Object.values(clsC).filter(c=>{if(!c.ts)return false;const d=new Date(c.ts);return d.getFullYear()===+yr&&(d.getMonth()+1)===+mo;});
+  let totalPizzasPizzetas=0,totalEmpanadas=0;
+  closes.forEach(c=>{totalPizzasPizzetas+=c.totalPizzas||0;totalEmpanadas+=c.totalEmpanadas||0;});
+
+  const empKeys=new Set(EMP_INGREDIENTS.map(i=>i.key));
+  const grouped={};
+  purchasesInMonth.forEach(p=>{
+    const key=p.ingredientKey||"otro";
+    if(!grouped[key])grouped[key]={name:p.name,total:0};
+    grouped[key].total+=Number(p.price||0);
+  });
+
+  const rows=Object.keys(grouped).map(key=>{
+    const isEmp=empKeys.has(key);
+    const producedQty=isEmp?totalEmpanadas:totalPizzasPizzetas;
+    const perUnit=producedQty>0?grouped[key].total/producedQty:0;
+    return {name:grouped[key].name,spent:grouped[key].total,isEmp,producedQty,perUnit};
+  });
+  return {rows,totalPizzasPizzetas,totalEmpanadas};
+}
+function renderRealCost(){
+  const month=document.getElementById("realCostMonth").value;
+  if(!month){alert("Selecciona un mes.");return;}
+  const result=calcRealCostPerIngredient(month);
+  const el=document.getElementById("realCostResult");
+  if(!result){el.innerHTML='<p class="empty">No hay compras registradas ese mes.</p>';return;}
+  const pizzaRows=result.rows.filter(r=>!r.isEmp);
+  const empRows=result.rows.filter(r=>r.isEmp);
+  let html='<div class="stat-grid" style="margin-top:10px;"><div class="stat-box"><div class="slabel">Pizzas+Pizzetas producidas</div><div class="svalue">'+result.totalPizzasPizzetas+'</div></div><div class="stat-box"><div class="slabel">Empanadas producidas</div><div class="svalue">'+result.totalEmpanadas+'</div></div></div>';
+  if(pizzaRows.length){
+    html+='<div class="section-title">Insumos de pizzas/pizzetas</div><div class="ranking-list">'+pizzaRows.map(r=>
+      '<div class="ranking-item"><span class="ranking-name">'+r.name+'</span><span style="font-size:.76rem;color:var(--muted);flex:0 0 auto;margin-right:8px;">$'+r.spent.toLocaleString("es-AR")+' total</span><span class="ranking-qty">'+(r.producedQty>0?'$'+r.perUnit.toFixed(2):'sin produccion')+'</span></div>'
+    ).join("")+'</div>';
+  }
+  if(empRows.length){
+    html+='<div class="section-title">Insumos de empanadas</div><div class="ranking-list">'+empRows.map(r=>
+      '<div class="ranking-item"><span class="ranking-name">'+r.name+'</span><span style="font-size:.76rem;color:var(--muted);flex:0 0 auto;margin-right:8px;">$'+r.spent.toLocaleString("es-AR")+' total</span><span class="ranking-qty">'+(r.producedQty>0?'$'+r.perUnit.toFixed(2):'sin produccion')+'</span></div>'
+    ).join("")+'</div>';
+  }
+  if(!pizzaRows.length&&!empRows.length)html+='<p class="empty">No hay compras clasificadas ese mes.</p>';
+  html+='<p class="hint-text" style="margin-top:10px;">El numero de la derecha es el costo de ESE insumo por cada pizza/pizzeta (o empanada) producida ese mes. Sumando todos los insumos de un grupo obtenes el costo total aproximado por unidad.</p>';
+  el.innerHTML=html;
+}
+
+
+/* ================== STATS 30 DIAS ================== */
 function renderStats30(){
   const el=document.getElementById("stats30Result");if(!el)return;
   const cutoff=Date.now()-30*24*60*60*1000;
   const recent=Object.values(clsC).filter(c=>c.ts&&c.ts>=cutoff);
   if(!recent.length){el.innerHTML='<p class="empty">No hay suficientes cierres en los ultimos 30 dias.</p>';return;}
 
-  let tPizzas=0,tEmp=0,tT=0,tCe=0,tM=0,tPz=0,tCar=0,tJq=0;
+  let tPizzas=0,tEmp=0,tT=0,tCe=0,tM=0,tPz=0,tCar=0,tJq=0,tNoCost=0;
   const clientAgg={};
   const weekdayPizzas=[0,0,0,0,0,0,0],weekdayEmp=[0,0,0,0,0,0,0],weekdayCount=[0,0,0,0,0,0,0];
+  let last7Pizzas=0,last7Emp=0;
+  const cutoff7=Date.now()-7*24*60*60*1000;
 
   recent.forEach(c=>{
     tPizzas+=c.totalPizzas||0;tEmp+=c.totalEmpanadas||0;
     tT+=c.pedidosTomate||0;tCe+=c.pedidosCebolla||0;tM+=c.pedidosMixta||0;tPz+=c.pedidosPizzeta||0;tCar+=c.pedidosCarne||0;tJq+=c.pedidosJyq||0;
+    tNoCost+=c.noCostTotal||0;
+    if(c.ts>=cutoff7){last7Pizzas+=c.totalPizzas||0;last7Emp+=c.totalEmpanadas||0;}
     const wd=c.weekday!==undefined?c.weekday:new Date(c.ts).getDay();
     weekdayPizzas[wd]+=c.totalPizzas||0;
     weekdayEmp[wd]+=c.totalEmpanadas||0;
@@ -1070,44 +1405,73 @@ function renderStats30(){
     return '<div class="weekday-box"><div class="wdlabel">'+d.slice(0,3)+'</div><div class="wdvalue">'+avg+'</div></div>';
   }).join("")+'</div>';
 
+  const priceInfo=priceC.unit||priceC.empUnit?
+    '<div class="stat-box"><div class="slabel">Ingresos est. (30 dias)</div><div class="svalue" style="color:#4caf50">$'+Math.round(tPizzas*(priceC.unit||0)+tEmp*(priceC.empUnit||0)).toLocaleString("es-AR")+'</div></div>':'';
+
   el.innerHTML=
     '<div class="stat-grid"><div class="stat-box"><div class="slabel">Dias con cierre</div><div class="svalue">'+recent.length+'</div></div>'+
-    '<div class="stat-box"><div class="slabel">Total pizzas</div><div class="svalue">'+tPizzas+'</div><div class="ssub">Tom:'+tT+' Ceb:'+tCe+' Mix:'+tM+' Piz:'+tPz+'</div></div>'+
-    '<div class="stat-box"><div class="slabel">Total empanadas</div><div class="svalue">'+tEmp+'</div><div class="ssub">Carne:'+tCar+' J&amp;Q:'+tJq+'</div></div>'+
-    '<div class="stat-box"><div class="slabel">Total absoluto</div><div class="svalue">'+(tPizzas+tEmp)+'</div></div></div>'+
-    rankingHtml("Top clientes (total)",rankingTotal)+
-    rankingHtml("Top clientes (pizzas)",rankingPizzas)+
-    rankingHtml("Top clientes (empanadas)",rankingEmp)+
+    '<div class="stat-box"><div class="slabel">Clientes distintos</div><div class="svalue">'+Object.keys(clientAgg).length+'</div></div>'+
+    '<div class="stat-box"><div class="slabel">Total pizzas (30d)</div><div class="svalue">'+tPizzas+'</div><div class="ssub">Tom:'+tT+' Ceb:'+tCe+' Mix:'+tM+' Piz:'+tPz+'</div></div>'+
+    '<div class="stat-box"><div class="slabel">Total empanadas (30d)</div><div class="svalue">'+tEmp+'</div><div class="ssub">Carne:'+tCar+' J&amp;Q:'+tJq+'</div></div>'+
+    '<div class="stat-box"><div class="slabel">Pizzas ultimos 7 dias</div><div class="svalue">'+last7Pizzas+'</div></div>'+
+    '<div class="stat-box"><div class="slabel">Empanadas ultimos 7 dias</div><div class="svalue">'+last7Emp+'</div></div>'+
+    (tNoCost>0?'<div class="stat-box"><div class="slabel">Sin costo (30d)</div><div class="svalue" style="color:var(--nocost-text)">'+tNoCost+'</div></div>':'')+
+    priceInfo+
+    '</div>'+
+    rankingHtml("Top clientes - total (30 dias)",rankingTotal)+
+    rankingHtml("Top clientes - pizzas (30 dias)",rankingPizzas)+
+    rankingHtml("Top clientes - empanadas (30 dias)",rankingEmp)+
     '<div class="section-title">Promedio de pizzas por dia de la semana</div>'+weekdayHtmlPizzas+
     '<div class="section-title">Promedio de empanadas por dia de la semana</div>'+weekdayHtmlEmp;
 }
 
-/* BALANCE MENSUAL */
+/* ================== BALANCE MENSUAL (costeo simplificado) ================== */
 function calcBalance(){
   const month=document.getElementById("balanceMonth").value;if(!month){alert("Selecciona un mes.");return;}
   const[yr,mo]=month.split("-");
   const closes=Object.values(clsC).filter(c=>{if(!c.ts)return false;const d=new Date(c.ts);return d.getFullYear()===+yr&&(d.getMonth()+1)===+mo;});
-  let tPizzas=0,tEmp=0,tCli=0;
-  closes.forEach(c=>{tPizzas+=c.totalPizzas||0;tEmp+=c.totalEmpanadas||0;tCli+=c.clientCount||0;});
+  let tPizzas=0,tEmp=0,tCli=0,tNoCost=0;
+  closes.forEach(c=>{tPizzas+=c.totalPizzas||0;tEmp+=c.totalEmpanadas||0;tCli+=c.clientCount||0;tNoCost+=c.noCostTotal||0;});
   const days=closes.length;
+  const totalUnidades=tPizzas+tEmp;
+
   const puPizza=priceC.unit||0,puEmp=priceC.empUnit||0;
   const ingPizzas=tPizzas*puPizza,ingEmp=tEmp*puEmp,totalIngresos=ingPizzas+ingEmp;
+
   const gastos=Object.values(expC).filter(e=>{if(!e.date)return false;const[ey,em]=e.date.split("-");return ey===yr&&em===mo;});
-  const totalGastos=gastos.reduce((s,e)=>s+Number(e.amt||0),0);
+  const totalGastosGenerales=gastos.reduce((s,e)=>s+Number(e.amt||0),0);
+
+  const compras=Object.values(purchC).filter(p=>{if(!p.date)return false;const[py,pm]=p.date.split("-");return py===yr&&pm===mo;});
+  const totalCompras=compras.reduce((s,p)=>s+Number(p.price||0),0);
+
+  const costoPorUnidad=totalUnidades>0?totalCompras/totalUnidades:0;
+  const totalGastos=totalGastosGenerales+totalCompras;
   const balance=totalIngresos-totalGastos;
   const fmt=n=>Math.round(n).toLocaleString("es-AR");
 
-  document.getElementById("balanceResult").innerHTML='<div class="stat-grid" style="margin-top:12px"><div class="stat-box"><div class="slabel">Dias con cierre</div><div class="svalue">'+days+'</div></div><div class="stat-box"><div class="slabel">Clientes totales</div><div class="svalue">'+tCli+'</div></div><div class="stat-box"><div class="slabel">Pizzas vendidas</div><div class="svalue">'+tPizzas+'</div></div><div class="stat-box"><div class="slabel">Empanadas vendidas</div><div class="svalue">'+tEmp+'</div></div>'+
-  (puPizza>0||puEmp>0?'<div class="stat-box"><div class="slabel">Ingresos est.</div><div class="svalue" style="color:#4caf50">$'+fmt(totalIngresos)+'</div><div class="ssub">Pizzas:$'+fmt(ingPizzas)+' Emp:$'+fmt(ingEmp)+'</div></div><div class="stat-box"><div class="slabel">Gastos</div><div class="svalue" style="color:var(--red)">$'+fmt(totalGastos)+'</div></div>':'')+
-  '</div>'+
-  ((puPizza>0||puEmp>0)?'<div class="total-strip '+(balance>=0?"pizzas":"pizzetas")+'" style="'+(balance<0?"background:var(--red)":"")+'"><span class="tl">Balance del mes</span><span class="tv">'+(balance>=0?"+":"")+"$"+fmt(balance)+'</span></div>':'<p style="color:var(--muted);font-size:.82rem;">Configura los precios de venta para ver el balance.</p>');
+  document.getElementById("balanceResult").innerHTML=
+    '<div class="stat-grid" style="margin-top:12px">'+
+    '<div class="stat-box"><div class="slabel">Dias con cierre</div><div class="svalue">'+days+'</div></div>'+
+    '<div class="stat-box"><div class="slabel">Clientes totales</div><div class="svalue">'+tCli+'</div></div>'+
+    '<div class="stat-box"><div class="slabel">Pizzas vendidas</div><div class="svalue">'+tPizzas+'</div></div>'+
+    '<div class="stat-box"><div class="slabel">Empanadas vendidas</div><div class="svalue">'+tEmp+'</div></div>'+
+    (tNoCost>0?'<div class="stat-box"><div class="slabel">Sin costo (no cobradas)</div><div class="svalue" style="color:var(--nocost-text)">'+tNoCost+'</div></div>':'')+
+    '<div class="stat-box"><div class="slabel">Gastado en insumos</div><div class="svalue" style="color:var(--red)">$'+fmt(totalCompras)+'</div></div>'+
+    '<div class="stat-box"><div class="slabel">Costo promedio / unidad</div><div class="svalue">$'+costoPorUnidad.toFixed(2)+'</div><div class="ssub">Compras del mes / unidades producidas</div></div>'+
+    '<div class="stat-box"><div class="slabel">Otros gastos</div><div class="svalue" style="color:var(--red)">$'+fmt(totalGastosGenerales)+'</div></div>'+
+    (puPizza>0||puEmp>0?'<div class="stat-box"><div class="slabel">Ingresos est.</div><div class="svalue" style="color:#4caf50">$'+fmt(totalIngresos)+'</div><div class="ssub">Pizzas:$'+fmt(ingPizzas)+' Emp:$'+fmt(ingEmp)+'</div></div>':'')+
+    '</div>'+
+    ((puPizza>0||puEmp>0)?'<div class="total-strip '+(balance>=0?"pizzas":"pizzetas")+'" style="'+(balance<0?"background:var(--red)":"")+'"><span class="tl">Balance del mes (ingresos - insumos - otros gastos)</span><span class="tv">'+(balance>=0?"+":"")+"$"+fmt(balance)+'</span></div>':'<p style="color:var(--muted);font-size:.82rem;">Configura los precios de venta para ver el balance completo.</p>')+
+    (totalUnidades===0?'<p class="hint-text" style="margin-top:10px;">No hay cierres registrados este mes, asi que no se puede calcular el costo por unidad todavia.</p>':'');
 }
 
 document.getElementById("expDate").value=new Date().toISOString().slice(0,10);
+document.getElementById("purchDate").value=new Date().toISOString().slice(0,10);
 document.getElementById("batchTime").value=new Date().toTimeString().slice(0,5);
 document.getElementById("balanceMonth").value=new Date().toISOString().slice(0,7);
+document.getElementById("realCostMonth").value=new Date().toISOString().slice(0,7);
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.activeElement.closest("#panel-pedidos"))addOrder();});
-startListening();
+startPolling();
 scheduleAutoClose();
 </script>
 </body>
