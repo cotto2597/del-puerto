@@ -7,7 +7,7 @@
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap");
 :root{
-  --bg:#0d0704;--card:#1a120a;--accent:#e85d04;--accent2:#f48c06;
+  --bg:#000000;--card:#151515;--accent:#e85d04;--accent2:#f48c06;
   --text:#f5e6d0;--muted:#9a7f60;--border:#3d2e1a;--red:#e53935;
   --blue:#1a1a5a;--blue-text:#90caf9;--green-text:#a5d6a7;
   --purple:#3a1a5a;--purple-text:#c9a5f5;
@@ -252,6 +252,35 @@ button:active{transform:scale(.96);}
 
 .empty{text-align:center;color:var(--muted);padding:20px 0;font-size:.88rem;}
 
+.client-search-wrap{position:relative;}
+.client-search-results{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:var(--card);border:1.5px solid var(--accent);border-radius:12px;
+  max-height:260px;overflow-y:auto;z-index:50;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+  display:none;
+}
+.client-search-results.show{display:block;}
+.client-search-item{
+  padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.client-search-item:last-child{border-bottom:none;}
+.client-search-item:hover,.client-search-item.selected{background:var(--bg);}
+.client-search-item .csname{font-weight:700;font-size:.9rem;flex:1;}
+.client-search-item .csmeta{font-size:.74rem;color:var(--muted);}
+.client-search-empty{padding:14px;text-align:center;color:var(--muted);font-size:.85rem;}
+.client-chosen{
+  background:var(--bg);border:1.5px solid var(--accent);border-radius:10px;
+  padding:9px 13px;display:flex;align-items:center;gap:8px;margin-top:8px;
+}
+.client-chosen .ccname{font-weight:700;flex:1;font-size:.92rem;}
+.client-chosen .ccclear{background:transparent;color:var(--muted);padding:2px 8px;border-radius:8px;font-size:.85rem;}
+.client-chosen .ccclear:hover{background:#3d2020;color:var(--red);}
+
+.admin-search-wrap{position:relative;margin-bottom:10px;}
+.admin-search-wrap input{margin-bottom:0;}
+
 /* Footer Kaizek */
 .kaizek-footer{
   max-width:780px;margin:24px auto 0;padding-top:16px;
@@ -324,9 +353,13 @@ button:active{transform:scale(.96);}
 <div class="tab-panel active" id="panel-pedidos">
   <div class="card no-print">
     <h2>Nuevo Pedido</h2>
-    <div class="row">
-      <select id="clientSelect"><option value="">Seleccionar cliente</option></select>
-      <button class="btn btn-primary" onclick="addOrder()">Agregar</button>
+    <div class="client-search-wrap">
+      <input type="text" id="clientSearch" placeholder="Buscar cliente por nombre..." autocomplete="off" oninput="onClientSearchInput()" onfocus="onClientSearchInput()"/>
+      <input type="hidden" id="clientSelect" value=""/>
+      <div class="client-search-results" id="clientSearchResults"></div>
+    </div>
+    <div class="row" style="margin-top:8px;">
+      <button class="btn btn-primary btn-full" onclick="addOrder()">Agregar pedido</button>
     </div>
 
     <div class="section-title" style="margin-top:14px">Pizzas</div>
@@ -421,7 +454,7 @@ button:active{transform:scale(.96);}
     <div class="prod-cols">
       <div>
         <div class="prod-col-title">En heladera</div>
-        <p class="prod-col-hint">Lo que ya tenias hecho de ayer o de antes, guardado y listo para usar hoy.</p>
+        <p class="prod-col-hint">Lo que ya tenias hecho de ayer o de antes. Al hacer el cierre del dia, lo que sobro pasa automaticamente aca para manana.</p>
         <div class="prod-grid">
           <div class="prod-box tomate"><span class="plabel">Tomate</span><input type="number" id="hTomate" min="0" value="0" oninput="saveProd()"/></div>
           <div class="prod-box cebolla"><span class="plabel">Cebolla</span><input type="number" id="hCebolla" min="0" value="0" oninput="saveProd()"/></div>
@@ -510,6 +543,9 @@ button:active{transform:scale(.96);}
         <input type="time" id="newClientClose"/>
         <button class="btn btn-primary" onclick="addClient()">Guardar</button>
       </div>
+      <div class="admin-search-wrap">
+        <input type="text" id="adminClientSearch" placeholder="Buscar cliente por nombre..." oninput="renderClients()"/>
+      </div>
       <div class="client-list" id="clientList"></div>
     </div>
 
@@ -552,6 +588,7 @@ button:active{transform:scale(.96);}
       <p class="hint-text">Opcional: si queres ver el costo estimado de UNA pizza (masa + aderezo segun variedad) o UNA empanada. El sistema busca el costo por unidad de medida de cada insumo en la ultima compra que registraste. Las bolsas y la tinta no entran aca porque son embalaje, no ingrediente.</p>
       <div class="recipe-block-wrap">
         <div class="section-title">Masa base de pizza (por tanda)</div>
+        <p class="hint-text" style="margin-top:0;">Aca van los ingredientes que se usan para toda la tanda, no por pizza individual, como el oregano (que va con la salsa pero en cantidad minima, mas facil calcularlo por tanda entera que por pizza).</p>
         <div class="row">
           <label style="flex:0 0 100%;font-size:.78rem;color:var(--muted);">Cuantas pizzas salen de una tanda tipica de masa</label>
         </div>
@@ -627,7 +664,7 @@ button:active{transform:scale(.96);}
 
 <script>
 const DB="https://delpuerto-72570-default-rtdb.firebaseio.com";
-const ADMIN_PASSWORD="delpuerto2024";
+const ADMIN_PASSWORD="delpuerto2017";
 const WEEKDAYS=["Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado"];
 const PIZZA_INGREDIENTS_BASE=[
   {key:"harina",name:"Harina",unit:"kg"},
@@ -839,14 +876,12 @@ async function editClient(k){
 }
 function renderClients(){
   const el=document.getElementById("clientList");if(!el)return;
-  const keys=Object.keys(cliC);
+  const q=(document.getElementById("adminClientSearch")?.value||"").trim().toLowerCase();
+  let keys=Object.keys(cliC);
   if(!keys.length){el.innerHTML='<div class="empty">No hay clientes.</div>';return;}
-  const sorted=keys.sort((a,b)=>{
-    const ca=cliC[a],cb=cliC[b];
-    if(ca.close&&cb.close)return ca.close.localeCompare(cb.close);
-    if(ca.close)return -1;if(cb.close)return 1;
-    return (ca.name||"").localeCompare(cb.name||"");
-  });
+  if(q)keys=keys.filter(k=>(cliC[k].name||"").toLowerCase().includes(q));
+  const sorted=keys.sort((a,b)=>(cliC[a].name||"").localeCompare(cliC[b].name||"",'es'));
+  if(!sorted.length){el.innerHTML='<div class="empty">Ningun cliente coincide con la busqueda.</div>';return;}
   el.innerHTML=sorted.map(k=>{
     const c=cliC[k];
     return '<div class="client-row"><span class="cname">'+c.name+'</span>'+(c.addr?'<span class="caddr">'+c.addr+'</span>':'')+
@@ -858,17 +893,63 @@ function renderClients(){
   }).join("");
 }
 function renderClientSelect(){
-  const sel=document.getElementById("clientSelect");if(!sel)return;
-  const cur=sel.value;
-  const keys=Object.keys(cliC).sort((a,b)=>{
-    const ca=cliC[a],cb=cliC[b];
-    if(ca.close&&cb.close)return ca.close.localeCompare(cb.close);
-    if(ca.close)return -1;if(cb.close)return 1;
-    return (ca.name||"").localeCompare(cb.name||"");
-  });
-  sel.innerHTML='<option value="">Seleccionar cliente</option>'+keys.map(k=>'<option value="'+k+'">'+cliC[k].name+(cliC[k].close?" - cierra "+cliC[k].close:"")+'</option>').join("");
-  if(cur&&cliC[cur])sel.value=cur;
+  /* Se mantiene la funcion por compatibilidad, ahora el buscador usa cliC directamente */
 }
+
+/* ================== BUSCADOR DE CLIENTES (Pedidos) ================== */
+function sortedClientKeysAlpha(){
+  return Object.keys(cliC).sort((a,b)=>(cliC[a].name||"").localeCompare(cliC[b].name||"",'es'));
+}
+function onClientSearchInput(){
+  const q=document.getElementById("clientSearch").value.trim().toLowerCase();
+  const box=document.getElementById("clientSearchResults");
+  const keys=sortedClientKeysAlpha().filter(k=>!q||((cliC[k].name||"").toLowerCase().includes(q)));
+  if(!keys.length){
+    box.innerHTML='<div class="client-search-empty">Ningun cliente encontrado.</div>';
+    box.classList.add("show");
+    return;
+  }
+  box.innerHTML=keys.slice(0,40).map(k=>{
+    const c=cliC[k];
+    return '<div class="client-search-item" onclick="selectClient(\''+k+'\')"><span class="csname">'+c.name+'</span>'+
+    (c.close?'<span class="csmeta">Cierra '+c.close+'</span>':'')+
+    (c.addr?'<span class="csmeta">'+c.addr+'</span>':'')+
+    '</div>';
+  }).join("");
+  box.classList.add("show");
+}
+function selectClient(key){
+  const c=cliC[key];if(!c)return;
+  document.getElementById("clientSelect").value=key;
+  document.getElementById("clientSearch").value="";
+  document.getElementById("clientSearchResults").classList.remove("show");
+  renderChosenClient();
+}
+function clearChosenClient(){
+  document.getElementById("clientSelect").value="";
+  renderChosenClient();
+}
+function renderChosenClient(){
+  const ck=document.getElementById("clientSelect").value;
+  let wrap=document.getElementById("clientChosenWrap");
+  const c=cliC[ck];
+  if(!wrap){
+    wrap=document.createElement("div");
+    wrap.id="clientChosenWrap";
+    document.getElementById("clientSearch").closest(".client-search-wrap").after(wrap);
+  }
+  if(ck&&c){
+    wrap.innerHTML='<div class="client-chosen"><span class="ccname">'+c.name+(c.close?' - cierra '+c.close:'')+'</span><button class="ccclear" onclick="clearChosenClient()">Cambiar</button></div>';
+  }else{
+    wrap.innerHTML="";
+  }
+}
+document.addEventListener("click",e=>{
+  const wrap=document.querySelector(".client-search-wrap");
+  if(wrap&&!wrap.contains(e.target)){
+    document.getElementById("clientSearchResults")?.classList.remove("show");
+  }
+});
 
 /* ================== ORDERS ================== */
 async function addOrder(){
@@ -896,13 +977,21 @@ async function addOrder(){
     name:cli.name,addr:cli.addr||"",close:cli.close||"",
     tomate:t,cebolla:ce,mixta:m,pizzeta:p,carne:car,jyq:jq,
     ncTomate:ncT,ncCebolla:ncCe,ncMixta:ncM,ncPizzeta:ncP,ncCarne:ncCar,ncJyq:ncJq,
-    priority:false,ts:now.getTime(),clientKey:ck,weekday:now.getDay()
+    priority:isEarlyClosingClient(cli.close),ts:now.getTime(),clientKey:ck,weekday:now.getDay()
   });
   if(ok){
     await fbPatch("clients/"+ck,{lastOrder:today,totalOrdered:(cli.totalOrdered||0)+t+ce+m+p+car+jq});
     document.getElementById("clientSelect").value="";
+    renderChosenClient();
     ["qTomate","qCebolla","qMixta","qPizzeta","qCarne","qJyq","ncTomate","ncCebolla","ncMixta","ncPizzeta","ncCarne","ncJyq"].forEach(id=>document.getElementById(id).value="0");
   }
+}
+function isEarlyClosingClient(closeTime){
+  if(!closeTime)return false;
+  const parts=closeTime.split(":");
+  if(parts.length<2)return false;
+  const hour=parseInt(parts[0]);
+  return !isNaN(hour)&&hour<16;
 }
 async function deleteOrder(k){await fbDelete("orders/"+k);}
 async function togglePriority(k){const o=oC[k];if(o)await fbPatch("orders/"+k,{priority:!o.priority});}
@@ -1069,9 +1158,10 @@ async function doClose(){
       clientTotals[o.clientKey].empanadas+=totEmp;
     }
   });
+  const hT=prodC.hTomate||0,hCe=prodC.hCebolla||0,hM=prodC.hMixta||0,hPz=prodC.hPizzeta||0,hCar=prodC.hCarne||0,hJq=prodC.hJyq||0;
   const aT=prodC.aTomate||0,aCe=prodC.aCebolla||0,aM=prodC.aMixta||0,aPz=prodC.aPizzeta||0,aCar=prodC.aCarne||0,aJq=prodC.aJyq||0;
   const now=new Date();
-  await fbPush("closes",{
+  const closeKey=await fbPush("closes",{
     date:now.toLocaleDateString("es-AR"),ts:now.getTime(),weekday:now.getDay(),
     pedidosTomate:tc,pedidosCebolla:tce,pedidosMixta:tm,pedidosPizzeta:tpz,pedidosCarne:tcar,pedidosJyq:tjq,
     amasadoTomate:aT,amasadoCebolla:aCe,amasadoMixta:aM,amasadoPizzeta:aPz,amasadoCarne:aCar,amasadoJyq:aJq,
@@ -1081,7 +1171,20 @@ async function doClose(){
     clientTotals
   });
   await fbSet("orders",null);await fbSet("batches",null);
-  await fbSet("production",{hTomate:0,hCebolla:0,hMixta:0,hPizzeta:0,hCarne:0,hJyq:0,aTomate:0,aCebolla:0,aMixta:0,aPizzeta:0,aCarne:0,aJyq:0});
+  /* Lo que sobro hoy (disponible - pedido) pasa a heladera para manana; nunca negativo */
+  const leftover=(k,disp,used)=>Math.max(0,disp-used);
+  const lT=leftover("t",hT+aT,tc), lCe=leftover("c",hCe+aCe,tce), lM=leftover("m",hM+aM,tm),
+        lPz=leftover("p",hPz+aPz,tpz), lCar=leftover("ca",hCar+aCar,tcar), lJq=leftover("j",hJq+aJq,tjq);
+  if(closeKey){
+    await fbPatch("closes/"+closeKey,{
+      sobranteTomate:lT,sobranteCebolla:lCe,sobranteMixta:lM,sobrantePizzeta:lPz,sobranteCarne:lCar,sobranteJyq:lJq,
+      sobranteTotal:lT+lCe+lM+lPz+lCar+lJq
+    });
+  }
+  await fbSet("production",{
+    hTomate:lT, hCebolla:lCe, hMixta:lM, hPizzeta:lPz, hCarne:lCar, hJyq:lJq,
+    aTomate:0,aCebolla:0,aMixta:0,aPizzeta:0,aCarne:0,aJyq:0
+  });
 }
 async function manualClose(){if(!confirm("Hacer cierre del dia? Se guardan los totales y se limpian los pedidos."))return;await doClose();}
 function renderCloses(){
@@ -1098,7 +1201,8 @@ function renderCloses(){
     if(c.pedidosCarne)chips.push('<span class="ov-chip carne"><span class="chip-qty">'+c.pedidosCarne+'</span> Carne</span>');
     if(c.pedidosJyq)chips.push('<span class="ov-chip jyq"><span class="chip-qty">'+c.pedidosJyq+'</span> J&amp;Q</span>');
     if(c.noCostTotal)chips.push('<span class="ov-chip nocost"><span class="chip-qty">'+c.noCostTotal+'</span> sin costo</span>');
-    return '<div class="close-item"><div class="cdate">'+c.date+'</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:5px;">Pizzas: '+(c.totalPizzas||0)+' | Empanadas: '+(c.totalEmpanadas||0)+' | Clientes: '+(c.clientCount||0)+'</div><div class="close-chips">'+chips.join("")+'</div></div>';
+    const sobranteLine=c.sobranteTotal?'<div style="font-size:.76rem;color:var(--accent2);margin-top:4px;">Sobraron '+c.sobranteTotal+' que pasaron a heladera para el dia siguiente</div>':'';
+    return '<div class="close-item"><div class="cdate">'+c.date+'</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:5px;">Pizzas: '+(c.totalPizzas||0)+' | Empanadas: '+(c.totalEmpanadas||0)+' | Clientes: '+(c.clientCount||0)+'</div><div class="close-chips">'+chips.join("")+'</div>'+sobranteLine+'</div>';
   }).join("");
 }
 function scheduleAutoClose(){const now=new Date(),midnight=new Date(now);midnight.setHours(24,0,0,0);setTimeout(async()=>{await doClose();scheduleAutoClose();},midnight-now);}
