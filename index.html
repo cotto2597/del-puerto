@@ -146,7 +146,7 @@ button:active{transform:scale(.96);}
 .p-box .plabel{color:var(--muted);font-size:.63rem;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
 .p-box .pvalue{font-family:"Bebas Neue",sans-serif;font-size:1.4rem;line-height:1;}
 
-.prod-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.prod-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
 .prod-col-title{font-family:"Bebas Neue",sans-serif;font-size:1rem;color:var(--muted);margin-bottom:4px;letter-spacing:1px;}
 .prod-col-hint{font-size:.72rem;color:var(--muted);margin-bottom:8px;line-height:1.3;}
 .prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:8px;}
@@ -474,6 +474,18 @@ button:active{transform:scale(.96);}
           <div class="prod-box pizzeta"><span class="plabel">Pizzeta</span><input type="number" id="aPizzeta" min="0" value="0" oninput="saveProd()"/><span class="prod-rem" id="remPizzeta"></span></div>
           <div class="prod-box carne"><span class="plabel">Emp. Carne</span><input type="number" id="aCarne" min="0" value="0" oninput="saveProd()"/><span class="prod-rem" id="remCarne"></span></div>
           <div class="prod-box jyq"><span class="plabel">Emp. J&amp;Q</span><input type="number" id="aJyq" min="0" value="0" oninput="saveProd()"/><span class="prod-rem" id="remJyq"></span></div>
+        </div>
+      </div>
+      <div>
+        <div class="prod-col-title">Merma de hoy</div>
+        <p class="prod-col-hint">Pizzas o empanadas que se rompieron, quemaron o se perdieron (no son para clientes). Se restan del stock disponible y quedan anotadas en el ticket de cierre.</p>
+        <div class="prod-grid">
+          <div class="prod-box tomate"><span class="plabel">Tomate</span><input type="number" id="mTomate" min="0" value="0" oninput="saveProd()"/></div>
+          <div class="prod-box cebolla"><span class="plabel">Cebolla</span><input type="number" id="mCebolla" min="0" value="0" oninput="saveProd()"/></div>
+          <div class="prod-box mixta"><span class="plabel">Mixta</span><input type="number" id="mMixta" min="0" value="0" oninput="saveProd()"/></div>
+          <div class="prod-box pizzeta"><span class="plabel">Pizzeta</span><input type="number" id="mPizzeta" min="0" value="0" oninput="saveProd()"/></div>
+          <div class="prod-box carne"><span class="plabel">Emp. Carne</span><input type="number" id="mCarne" min="0" value="0" oninput="saveProd()"/></div>
+          <div class="prod-box jyq"><span class="plabel">Emp. J&amp;Q</span><input type="number" id="mJyq" min="0" value="0" oninput="saveProd()"/></div>
         </div>
       </div>
     </div>
@@ -1061,12 +1073,13 @@ function saveProd(){
   prodTimer=setTimeout(async()=>{
     await fbSet("production",{
       hTomate:+document.getElementById("hTomate").value||0,hCebolla:+document.getElementById("hCebolla").value||0,hMixta:+document.getElementById("hMixta").value||0,hPizzeta:+document.getElementById("hPizzeta").value||0,hCarne:+document.getElementById("hCarne").value||0,hJyq:+document.getElementById("hJyq").value||0,
-      aTomate:+document.getElementById("aTomate").value||0,aCebolla:+document.getElementById("aCebolla").value||0,aMixta:+document.getElementById("aMixta").value||0,aPizzeta:+document.getElementById("aPizzeta").value||0,aCarne:+document.getElementById("aCarne").value||0,aJyq:+document.getElementById("aJyq").value||0
+      aTomate:+document.getElementById("aTomate").value||0,aCebolla:+document.getElementById("aCebolla").value||0,aMixta:+document.getElementById("aMixta").value||0,aPizzeta:+document.getElementById("aPizzeta").value||0,aCarne:+document.getElementById("aCarne").value||0,aJyq:+document.getElementById("aJyq").value||0,
+      mTomate:+document.getElementById("mTomate").value||0,mCebolla:+document.getElementById("mCebolla").value||0,mMixta:+document.getElementById("mMixta").value||0,mPizzeta:+document.getElementById("mPizzeta").value||0,mCarne:+document.getElementById("mCarne").value||0,mJyq:+document.getElementById("mJyq").value||0
     });
   },600);renderProduction();
 }
 function applyProd(){
-  ["hTomate","hCebolla","hMixta","hPizzeta","hCarne","hJyq","aTomate","aCebolla","aMixta","aPizzeta","aCarne","aJyq"].forEach(id=>{
+  ["hTomate","hCebolla","hMixta","hPizzeta","hCarne","hJyq","aTomate","aCebolla","aMixta","aPizzeta","aCarne","aJyq","mTomate","mCebolla","mMixta","mPizzeta","mCarne","mJyq"].forEach(id=>{
     const el=document.getElementById(id);
     if(el&&document.activeElement!==el)el.value=prodC[id]||0;
   });
@@ -1076,7 +1089,8 @@ function renderProduction(){
   const tT=+document.getElementById("sumTomate")?.textContent||0,tCe=+document.getElementById("sumCebolla")?.textContent||0,tM=+document.getElementById("sumMixta")?.textContent||0,tPz=+document.getElementById("sumPizzeta")?.textContent||0,tCar=+document.getElementById("sumCarne")?.textContent||0,tJq=+document.getElementById("sumJyq")?.textContent||0;
   const hT=+document.getElementById("hTomate")?.value||0,hCe=+document.getElementById("hCebolla")?.value||0,hM=+document.getElementById("hMixta")?.value||0,hPz=+document.getElementById("hPizzeta")?.value||0,hCar=+document.getElementById("hCarne")?.value||0,hJq=+document.getElementById("hJyq")?.value||0;
   const aT=+document.getElementById("aTomate")?.value||0,aCe=+document.getElementById("aCebolla")?.value||0,aM=+document.getElementById("aMixta")?.value||0,aPz=+document.getElementById("aPizzeta")?.value||0,aCar=+document.getElementById("aCarne")?.value||0,aJq=+document.getElementById("aJyq")?.value||0;
-  const dT=hT+aT,dCe=hCe+aCe,dM=hM+aM,dPz=hPz+aPz,dCar=hCar+aCar,dJq=hJq+aJq;
+  const mT=+document.getElementById("mTomate")?.value||0,mCe=+document.getElementById("mCebolla")?.value||0,mM=+document.getElementById("mMixta")?.value||0,mPz=+document.getElementById("mPizzeta")?.value||0,mCar=+document.getElementById("mCarne")?.value||0,mJq=+document.getElementById("mJyq")?.value||0;
+  const dT=hT+aT-mT,dCe=hCe+aCe-mCe,dM=hM+aM-mM,dPz=hPz+aPz-mPz,dCar=hCar+aCar-mCar,dJq=hJq+aJq-mJq;
   function sr(id,d,t){const el=document.getElementById(id);if(!el)return;const r=t-d;if(r>0){el.textContent="Faltan "+r;el.className="prod-rem rem-warn";}else if(r===0){el.textContent="Listo";el.className="prod-rem rem-ok";}else{el.textContent="Sobran "+Math.abs(r);el.className="prod-rem rem-over";}}
   sr("remTomate",dT,tT);sr("remCebolla",dCe,tCe);sr("remMixta",dM,tM);sr("remPizzeta",dPz,tPz);sr("remCarne",dCar,tCar);sr("remJyq",dJq,tJq);
   const rP=(tT+tCe+tM)-(dT+dCe+dM),rPz=tPz-dPz,rEmp=(tCar+tJq)-(dCar+dJq);
@@ -1160,21 +1174,26 @@ async function doClose(){
   });
   const hT=prodC.hTomate||0,hCe=prodC.hCebolla||0,hM=prodC.hMixta||0,hPz=prodC.hPizzeta||0,hCar=prodC.hCarne||0,hJq=prodC.hJyq||0;
   const aT=prodC.aTomate||0,aCe=prodC.aCebolla||0,aM=prodC.aMixta||0,aPz=prodC.aPizzeta||0,aCar=prodC.aCarne||0,aJq=prodC.aJyq||0;
+  const mT=prodC.mTomate||0,mCe=prodC.mCebolla||0,mM=prodC.mMixta||0,mPz=prodC.mPizzeta||0,mCar=prodC.mCarne||0,mJq=prodC.mJyq||0;
   const now=new Date();
+  const batchesSnapshot=Object.values(batC).sort((a,b)=>(a.ts||0)-(b.ts||0));
   const closeKey=await fbPush("closes",{
     date:now.toLocaleDateString("es-AR"),ts:now.getTime(),weekday:now.getDay(),
     pedidosTomate:tc,pedidosCebolla:tce,pedidosMixta:tm,pedidosPizzeta:tpz,pedidosCarne:tcar,pedidosJyq:tjq,
     amasadoTomate:aT,amasadoCebolla:aCe,amasadoMixta:aM,amasadoPizzeta:aPz,amasadoCarne:aCar,amasadoJyq:aJq,
+    mermaTomate:mT,mermaCebolla:mCe,mermaMixta:mM,mermaPizzeta:mPz,mermaCarne:mCar,mermaJyq:mJq,
+    mermaTotal:mT+mCe+mM+mPz+mCar+mJq,
     totalPizzas:tc+tce+tm+tpz,totalEmpanadas:tcar+tjq,totalPedidos:tc+tce+tm+tpz+tcar+tjq,
     totalAmasado:aT+aCe+aM+aPz+aCar+aJq,clientCount:cset.size||orders.length,
     noCostTotal:ncTotal,
-    clientTotals
+    clientTotals,
+    batches:batchesSnapshot
   });
   await fbSet("orders",null);await fbSet("batches",null);
-  /* Lo que sobro hoy (disponible - pedido) pasa a heladera para manana; nunca negativo */
-  const leftover=(k,disp,used)=>Math.max(0,disp-used);
-  const lT=leftover("t",hT+aT,tc), lCe=leftover("c",hCe+aCe,tce), lM=leftover("m",hM+aM,tm),
-        lPz=leftover("p",hPz+aPz,tpz), lCar=leftover("ca",hCar+aCar,tcar), lJq=leftover("j",hJq+aJq,tjq);
+  /* Lo que sobro hoy (disponible - merma - pedido) pasa a heladera para manana; nunca negativo */
+  const leftover=(disp,merma,used)=>Math.max(0,disp-merma-used);
+  const lT=leftover(hT+aT,mT,tc), lCe=leftover(hCe+aCe,mCe,tce), lM=leftover(hM+aM,mM,tm),
+        lPz=leftover(hPz+aPz,mPz,tpz), lCar=leftover(hCar+aCar,mCar,tcar), lJq=leftover(hJq+aJq,mJq,tjq);
   if(closeKey){
     await fbPatch("closes/"+closeKey,{
       sobranteTomate:lT,sobranteCebolla:lCe,sobranteMixta:lM,sobrantePizzeta:lPz,sobranteCarne:lCar,sobranteJyq:lJq,
@@ -1183,10 +1202,110 @@ async function doClose(){
   }
   await fbSet("production",{
     hTomate:lT, hCebolla:lCe, hMixta:lM, hPizzeta:lPz, hCarne:lCar, hJyq:lJq,
-    aTomate:0,aCebolla:0,aMixta:0,aPizzeta:0,aCarne:0,aJyq:0
+    aTomate:0,aCebolla:0,aMixta:0,aPizzeta:0,aCarne:0,aJyq:0,
+    mTomate:0,mCebolla:0,mMixta:0,mPizzeta:0,mCarne:0,mJyq:0
+  });
+
+  /* Genera el PDF del ticket de cierre */
+  generateClosePdf({
+    date:now.toLocaleDateString("es-AR"),time:now.toLocaleTimeString("es-AR",{hour:'2-digit',minute:'2-digit'}),
+    pedidosTomate:tc,pedidosCebolla:tce,pedidosMixta:tm,pedidosPizzeta:tpz,pedidosCarne:tcar,pedidosJyq:tjq,
+    amasadoTomate:aT,amasadoCebolla:aCe,amasadoMixta:aM,amasadoPizzeta:aPz,amasadoCarne:aCar,amasadoJyq:aJq,
+    mermaTomate:mT,mermaCebolla:mCe,mermaMixta:mM,mermaPizzeta:mPz,mermaCarne:mCar,mermaJyq:mJq,
+    sobranteTomate:lT,sobranteCebolla:lCe,sobranteMixta:lM,sobrantePizzeta:lPz,sobranteCarne:lCar,sobranteJyq:lJq,
+    totalPizzas:tc+tce+tm+tpz,totalEmpanadas:tcar+tjq,clientCount:cset.size||orders.length,
+    noCostTotal:ncTotal,batches:batchesSnapshot
   });
 }
 async function manualClose(){if(!confirm("Hacer cierre del dia? Se guardan los totales y se limpian los pedidos."))return;await doClose();}
+
+/* ================== TICKET DE CIERRE (PDF via impresion) ================== */
+function generateClosePdf(d){
+  const rows=(label,val)=>val>0?'<tr><td>'+label+'</td><td class="tval">'+val+'</td></tr>':'';
+  const pizzaRows=rows("Tomate",d.pedidosTomate)+rows("Cebolla",d.pedidosCebolla)+rows("Mixta",d.pedidosMixta)+rows("Pizzeta",d.pedidosPizzeta);
+  const empRows=rows("Empanada Carne",d.pedidosCarne)+rows("Empanada Jamon y Queso",d.pedidosJyq);
+  const amasadoRows=rows("Tomate",d.amasadoTomate)+rows("Cebolla",d.amasadoCebolla)+rows("Mixta",d.amasadoMixta)+rows("Pizzeta",d.amasadoPizzeta)+rows("Empanada Carne",d.amasadoCarne)+rows("Empanada Jamon y Queso",d.amasadoJyq);
+  const mermaTotal=(d.mermaTomate||0)+(d.mermaCebolla||0)+(d.mermaMixta||0)+(d.mermaPizzeta||0)+(d.mermaCarne||0)+(d.mermaJyq||0);
+  const mermaRows=rows("Tomate",d.mermaTomate)+rows("Cebolla",d.mermaCebolla)+rows("Mixta",d.mermaMixta)+rows("Pizzeta",d.mermaPizzeta)+rows("Empanada Carne",d.mermaCarne)+rows("Empanada Jamon y Queso",d.mermaJyq);
+  const sobranteTotal=(d.sobranteTomate||0)+(d.sobranteCebolla||0)+(d.sobranteMixta||0)+(d.sobrantePizzeta||0)+(d.sobranteCarne||0)+(d.sobranteJyq||0);
+  const sobranteRows=rows("Tomate",d.sobranteTomate)+rows("Cebolla",d.sobranteCebolla)+rows("Mixta",d.sobranteMixta)+rows("Pizzeta",d.sobrantePizzeta)+rows("Empanada Carne",d.sobranteCarne)+rows("Empanada Jamon y Queso",d.sobranteJyq);
+
+  const batches=(d.batches||[]).slice().sort((a,b)=>(a.time||"").localeCompare(b.time||""));
+  const batchRows=batches.map(b=>{
+    let detail="";
+    if(b.type==="empanada"){
+      const parts=[];
+      if(b.carne)parts.push(b.carne+" Carne");
+      if(b.jyq)parts.push(b.jyq+" J&Q");
+      detail="Empanadas: "+parts.join(", ");
+    }else{
+      const parts=[];
+      if(b.tomate)parts.push(b.tomate+" Tomate");
+      if(b.cebolla)parts.push(b.cebolla+" Cebolla");
+      if(b.mixta)parts.push(b.mixta+" Mixta");
+      if(b.pizzeta)parts.push(b.pizzeta+" Pizzeta");
+      detail="Pizzas: "+parts.join(", ");
+    }
+    return '<tr><td>'+(b.time||"-")+'</td><td>'+detail+'</td></tr>';
+  }).join("");
+
+  const html=`<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><title>Ticket de cierre - ${d.date}</title>
+<style>
+  @page{size:auto;margin:14mm;}
+  body{font-family:Arial,Helvetica,sans-serif;color:#111;max-width:480px;margin:0 auto;padding:16px;}
+  h1{font-size:1.3rem;margin-bottom:2px;border-bottom:2px solid #111;padding-bottom:8px;}
+  .sub{color:#555;font-size:.85rem;margin-bottom:16px;}
+  h2{font-size:1rem;margin:18px 0 6px;background:#eee;padding:6px 8px;border-radius:4px;}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;}
+  td{padding:4px 6px;border-bottom:1px solid #ddd;}
+  .tval{text-align:right;font-weight:700;}
+  .total-line{display:flex;justify-content:space-between;font-weight:700;font-size:1.05rem;margin-top:6px;padding-top:6px;border-top:2px solid #111;}
+  .empty-note{color:#777;font-size:.85rem;font-style:italic;padding:4px 6px;}
+  .footer{margin-top:24px;text-align:center;color:#888;font-size:.75rem;border-top:1px dashed #ccc;padding-top:10px;}
+  @media print{ body{padding:0;} }
+</style>
+</head>
+<body>
+  <h1>Del Puerto Pizzeria - Ticket de Cierre</h1>
+  <div class="sub">${d.date} - Cierre a las ${d.time} - Clientes atendidos: ${d.clientCount}</div>
+
+  <h2>Pedidos - Pizzas</h2>
+  <table>${pizzaRows||'<tr><td class="empty-note">Sin pedidos de pizzas</td></tr>'}</table>
+  <div class="total-line"><span>Total pizzas</span><span>${d.totalPizzas}</span></div>
+
+  <h2>Pedidos - Empanadas</h2>
+  <table>${empRows||'<tr><td class="empty-note">Sin pedidos de empanadas</td></tr>'}</table>
+  <div class="total-line"><span>Total empanadas</span><span>${d.totalEmpanadas}</span></div>
+
+  ${d.noCostTotal>0?'<h2>Sin costo (falladas / cortesia)</h2><div class="total-line"><span>Unidades sin costo</span><span>'+d.noCostTotal+'</span></div>':''}
+
+  <h2>Amasado del dia</h2>
+  <table>${amasadoRows||'<tr><td class="empty-note">Sin amasado registrado</td></tr>'}</table>
+
+  <h2>Tandas de amasado (detalle por hora)</h2>
+  <table>${batchRows||'<tr><td class="empty-note">Sin tandas registradas</td></tr>'}</table>
+
+  ${mermaTotal>0?'<h2>Merma del dia</h2><table>'+mermaRows+'</table><div class="total-line"><span>Total merma</span><span>'+mermaTotal+'</span></div>':''}
+
+  <h2>Sobrante que pasa a heladera para manana</h2>
+  <table>${sobranteRows||'<tr><td class="empty-note">No sobro nada</td></tr>'}</table>
+  <div class="total-line"><span>Total sobrante</span><span>${sobranteTotal}</span></div>
+
+  <div class="footer">Generado automaticamente por el sistema de Del Puerto Pizzeria</div>
+
+  <script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
+</body></html>`;
+
+  const win=window.open("","_blank");
+  if(win){
+    win.document.write(html);
+    win.document.close();
+  }else{
+    alert("El navegador bloqueo la ventana del ticket. Permiti las ventanas emergentes para este sitio y volve a intentar.");
+  }
+}
+
 function renderCloses(){
   const list=document.getElementById("closeList");if(!list)return;
   const keys=Object.keys(clsC);
@@ -1201,9 +1320,22 @@ function renderCloses(){
     if(c.pedidosCarne)chips.push('<span class="ov-chip carne"><span class="chip-qty">'+c.pedidosCarne+'</span> Carne</span>');
     if(c.pedidosJyq)chips.push('<span class="ov-chip jyq"><span class="chip-qty">'+c.pedidosJyq+'</span> J&amp;Q</span>');
     if(c.noCostTotal)chips.push('<span class="ov-chip nocost"><span class="chip-qty">'+c.noCostTotal+'</span> sin costo</span>');
-    const sobranteLine=c.sobranteTotal?'<div style="font-size:.76rem;color:var(--accent2);margin-top:4px;">Sobraron '+c.sobranteTotal+' que pasaron a heladera para el dia siguiente</div>':'';
-    return '<div class="close-item"><div class="cdate">'+c.date+'</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:5px;">Pizzas: '+(c.totalPizzas||0)+' | Empanadas: '+(c.totalEmpanadas||0)+' | Clientes: '+(c.clientCount||0)+'</div><div class="close-chips">'+chips.join("")+'</div>'+sobranteLine+'</div>';
+    const mermaLine=c.mermaTotal?'<div style="font-size:.76rem;color:var(--red);margin-top:4px;">Merma del dia: '+c.mermaTotal+'</div>':'';
+    const sobranteLine=c.sobranteTotal?'<div style="font-size:.76rem;color:var(--accent2);margin-top:2px;">Sobraron '+c.sobranteTotal+' que pasaron a heladera para el dia siguiente</div>':'';
+    return '<div class="close-item"><div class="cdate">'+c.date+'</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:5px;">Pizzas: '+(c.totalPizzas||0)+' | Empanadas: '+(c.totalEmpanadas||0)+' | Clientes: '+(c.clientCount||0)+'</div><div class="close-chips">'+chips.join("")+'</div>'+mermaLine+sobranteLine+'<button class="btn-ghost no-print" style="margin-top:8px;" onclick="reprintClosePdf(\''+k+'\')">Ver ticket / PDF</button></div>';
   }).join("");
+}
+function reprintClosePdf(key){
+  const c=clsC[key];if(!c)return;
+  generateClosePdf({
+    date:c.date,time:c.ts?new Date(c.ts).toLocaleTimeString("es-AR",{hour:'2-digit',minute:'2-digit'}):'',
+    pedidosTomate:c.pedidosTomate||0,pedidosCebolla:c.pedidosCebolla||0,pedidosMixta:c.pedidosMixta||0,pedidosPizzeta:c.pedidosPizzeta||0,pedidosCarne:c.pedidosCarne||0,pedidosJyq:c.pedidosJyq||0,
+    amasadoTomate:c.amasadoTomate||0,amasadoCebolla:c.amasadoCebolla||0,amasadoMixta:c.amasadoMixta||0,amasadoPizzeta:c.amasadoPizzeta||0,amasadoCarne:c.amasadoCarne||0,amasadoJyq:c.amasadoJyq||0,
+    mermaTomate:c.mermaTomate||0,mermaCebolla:c.mermaCebolla||0,mermaMixta:c.mermaMixta||0,mermaPizzeta:c.mermaPizzeta||0,mermaCarne:c.mermaCarne||0,mermaJyq:c.mermaJyq||0,
+    sobranteTomate:c.sobranteTomate||0,sobranteCebolla:c.sobranteCebolla||0,sobranteMixta:c.sobranteMixta||0,sobrantePizzeta:c.sobrantePizzeta||0,sobranteCarne:c.sobranteCarne||0,sobranteJyq:c.sobranteJyq||0,
+    totalPizzas:c.totalPizzas||0,totalEmpanadas:c.totalEmpanadas||0,clientCount:c.clientCount||0,
+    noCostTotal:c.noCostTotal||0,batches:c.batches||[]
+  });
 }
 function scheduleAutoClose(){const now=new Date(),midnight=new Date(now);midnight.setHours(24,0,0,0);setTimeout(async()=>{await doClose();scheduleAutoClose();},midnight-now);}
 
