@@ -95,6 +95,7 @@ button:active{transform:scale(.96);}
 .order-num{background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;border-radius:6px;padding:2px 7px;min-width:24px;text-align:center;flex-shrink:0;}
 .order-name{font-weight:700;font-size:.95rem;flex:1;}
 .order-meta{color:var(--muted);font-size:.76rem;}
+.order-addr{color:var(--accent2);font-size:.82rem;font-weight:600;margin:2px 0 7px;padding-left:2px;}
 .priority-toggle{background:transparent;border:1.5px solid var(--border);color:var(--muted);padding:2px 8px;border-radius:18px;font-size:.7rem;font-weight:600;cursor:pointer;}
 .priority-toggle.on{background:#7a3a00;border-color:var(--accent);color:#ffb060;}
 .order-varieties{display:flex;gap:6px;flex-wrap:wrap;}
@@ -166,7 +167,7 @@ button:active{transform:scale(.96);}
 .rem-over{color:#ff9090;}
 
 .remaining-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
-.rem-strip{border-radius:12px;padding:11px 13px;display:flex;flex-direction:column;gap:2px;}
+.rem-strip{border-radius:12px;padding:11px 13px;display:flex;flex-direction:column;gap:2px;transition:background .3s,border-color .3s;}
 .rem-strip.pr{background:#1a2a0a;border:1.5px solid #4a8a20;}
 .rem-strip.pz{background:#0a1a3a;border:1.5px solid #3a4a8a;}
 .rem-strip.emp{background:#3a2005;border:1.5px solid var(--emp1-text);}
@@ -174,6 +175,10 @@ button:active{transform:scale(.96);}
 .rem-strip.pr .rl{color:#7ab050;}
 .rem-strip.pz .rl{color:#7090d0;}
 .rem-strip.emp .rl{color:var(--emp1-text);}
+.rem-strip.state-faltan{background:#3a0a0a;border:1.5px solid #a83030;}
+.rem-strip.state-faltan .rl{color:#ff9090;}
+.rem-strip.state-sobran{background:#0a2a10;border:1.5px solid #4a8a50;}
+.rem-strip.state-sobran .rl{color:#a5d6a7;}
 .rem-strip .rv{font-family:"Bebas Neue",sans-serif;font-size:1.7rem;line-height:1;}
 
 .batch-list{display:flex;flex-direction:column;gap:7px;margin-top:10px;}
@@ -193,11 +198,20 @@ button:active{transform:scale(.96);}
 .admin-lock h2{font-family:"Bebas Neue",sans-serif;font-size:1.8rem;color:var(--accent);margin-bottom:16px;letter-spacing:1px;}
 .admin-lock input{max-width:260px;margin:0 auto 12px;display:block;}
 
-.client-list{display:flex;flex-direction:column;gap:6px;}
-.client-row{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.client-row .cname{font-weight:700;flex:1;font-size:.9rem;min-width:80px;}
+.client-list{display:flex;flex-direction:column;gap:5px;max-height:480px;overflow-y:auto;padding-right:2px;}
+.client-row{background:var(--bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s;}
+.client-row.expanded{border-color:var(--accent);}
+.client-row-head{padding:9px 13px;display:flex;align-items:center;gap:8px;cursor:pointer;}
+.client-row .cname{font-weight:700;flex:1;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .client-row .caddr{color:var(--muted);font-size:.78rem;}
 .client-row .clast{color:var(--accent2);font-size:.72rem;}
+.client-row-chevron{color:var(--muted);font-size:.8rem;flex:0 0 auto;transition:transform .2s;}
+.client-row.expanded .client-row-chevron{transform:rotate(90deg);}
+.client-row-body{display:none;padding:0 13px 12px;flex-direction:column;gap:6px;border-top:1px solid var(--border);}
+.client-row.expanded .client-row-body{display:flex;}
+.client-row-body-line{font-size:.8rem;color:var(--muted);padding-top:10px;}
+.client-row-body-line strong{color:var(--text);}
+.client-row-actions{display:flex;gap:8px;}
 .close-badge{font-size:.7rem;font-weight:700;border-radius:18px;padding:2px 8px;white-space:nowrap;background:#5a2a00;color:#ffb060;}
 
 .expense-list{display:flex;flex-direction:column;gap:6px;}
@@ -490,9 +504,9 @@ button:active{transform:scale(.96);}
       </div>
     </div>
     <div class="remaining-grid">
-      <div class="rem-strip pr"><span class="rl">Pizzas restantes</span><span class="rv" id="remTotal">0</span></div>
-      <div class="rem-strip pz"><span class="rl">Pizzetas restantes</span><span class="rv" id="remPizzetaTotal">0</span></div>
-      <div class="rem-strip emp"><span class="rl">Empanadas restantes</span><span class="rv" id="remEmpTotal">0</span></div>
+      <div class="rem-strip pr" id="remTotalStrip"><span class="rl" id="remTotalLabel">Pizzas restantes</span><span class="rv" id="remTotal">0</span></div>
+      <div class="rem-strip pz" id="remPizzetaTotalStrip"><span class="rl" id="remPizzetaTotalLabel">Pizzetas restantes</span><span class="rv" id="remPizzetaTotal">0</span></div>
+      <div class="rem-strip emp" id="remEmpTotalStrip"><span class="rl" id="remEmpTotalLabel">Empanadas restantes</span><span class="rv" id="remEmpTotal">0</span></div>
     </div>
   </div>
 
@@ -528,8 +542,12 @@ button:active{transform:scale(.96);}
   <div class="card">
     <h2>Cierres diarios</h2>
     <div class="close-list" id="closeList"><div class="empty">No hay cierres registrados aun.</div></div>
+    <p class="hint-text" style="margin-top:14px;">Por defecto el cierre se hace con la fecha de hoy. Si te olvidaste de cerrar un dia anterior, cambia la fecha antes de tocar el boton.</p>
+    <div class="row">
+      <input type="date" id="closeDateInput" style="max-width:200px;"/>
+    </div>
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="manualClose()">Hacer cierre ahora</button>
+      <button class="btn btn-primary" onclick="manualClose()">Hacer cierre</button>
     </div>
   </div>
 </div>
@@ -730,25 +748,29 @@ const PURCHASE_CATALOG=[
   {key:"e_condimentos",name:"Condimentos (empanadas)",unit:"g"},
   {key:"otro",name:"Otro insumo",unit:"u"}
 ];
-const POLL_MS=4000;
+const POLL_MS=8000;
 
 /* ================== SYNC (polling simple y robusto) ================== */
 function setSync(s,t){document.getElementById("syncDot").className="sync-dot "+s;document.getElementById("syncText").textContent=t;}
 
-async function fbGetAll(){
+async function fbGetPath(path,query){
   try{
-    const r=await fetch(DB+"/.json?ts="+Date.now());
+    const q=query?"&"+query:"";
+    const r=await fetch(DB+"/"+path+".json?ts="+Date.now()+q);
     if(!r.ok)throw new Error("bad status");
     return await r.json();
   }catch(err){throw err;}
 }
+const HISTORY_PATHS=["closes","expenses","purchases"];
+function isHistoryPath(path){return HISTORY_PATHS.some(p=>path===p||path.startsWith(p+"/"));}
+
 async function fbSet(path,data){
   setSync("syncing","Guardando...");
   try{
     const r=await fetch(DB+"/"+path+".json",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
     if(!r.ok)throw new Error("PUT failed");
     setSync("connected","Sincronizado");
-    await refreshNow();
+    if(isHistoryPath(path))await loadHistoryData(true);else await refreshNow();
     return true;
   }catch(err){setSync("error","Error al guardar");return false;}
 }
@@ -759,7 +781,7 @@ async function fbPush(path,data){
     if(!r.ok)throw new Error("POST failed");
     const j=await r.json();
     setSync("connected","Sincronizado");
-    await refreshNow();
+    if(isHistoryPath(path))await loadHistoryData(true);else await refreshNow();
     return j.name;
   }catch(err){setSync("error","Error al guardar");return null;}
 }
@@ -769,7 +791,7 @@ async function fbDelete(path){
     const r=await fetch(DB+"/"+path+".json",{method:"DELETE"});
     if(!r.ok)throw new Error("DELETE failed");
     setSync("connected","Sincronizado");
-    await refreshNow();
+    if(isHistoryPath(path))await loadHistoryData(true);else await refreshNow();
     return true;
   }catch(err){setSync("error","Error al eliminar");return false;}
 }
@@ -779,7 +801,7 @@ async function fbPatch(path,data){
     const r=await fetch(DB+"/"+path+".json",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
     if(!r.ok)throw new Error("PATCH failed");
     setSync("connected","Sincronizado");
-    await refreshNow();
+    if(isHistoryPath(path))await loadHistoryData(true);else await refreshNow();
     return true;
   }catch(err){setSync("error","Error al guardar");return false;}
 }
@@ -787,29 +809,61 @@ async function fbPatch(path,data){
 let oC={},cliC={},prodC={},batC={},clsC={},expC={},priceC={unit:0,empUnit:0},purchC={},recC={};
 let pollTimer=null;
 let isPolling=false;
+let historyLoaded=false;
+const HISTORY_LIMIT=90; /* ultimos ~90 registros de closes/expenses/purchases en el poll liviano */
 
+/* Poll liviano: solo lo que cambia todo el tiempo (pedidos del dia, clientes, stock, tandas de hoy).
+   No baja el historial completo cada vez para no consumir cuota con los años. */
 async function refreshNow(){
   if(isPolling)return;
+  if(document.hidden)return; /* pausa el polling si la pestaña no esta visible */
   isPolling=true;
   try{
-    const data=await fbGetAll();
-    if(data){
-      oC=data.orders||{};
-      cliC=data.clients||{};
-      prodC=data.production||{};
-      batC=data.batches||{};
-      clsC=data.closes||{};
-      expC=data.expenses||{};
-      priceC=data.price||{unit:0,empUnit:0};
-      purchC=data.purchases||{};
-      recC=data.recipe||{};
-      renderAll();
-    }
+    const[ordersD,clientsD,prodD,batchesD,priceD,recipeD]=await Promise.all([
+      fbGetPath("orders"),
+      fbGetPath("clients"),
+      fbGetPath("production"),
+      fbGetPath("batches"),
+      fbGetPath("price"),
+      fbGetPath("recipe")
+    ]);
+    oC=ordersD||{};
+    cliC=clientsD||{};
+    prodC=prodD||{};
+    batC=batchesD||{};
+    priceC=priceD||{unit:0,empUnit:0};
+    recC=recipeD||{};
+    renderAll();
     setSync("connected","Sincronizado");
   }catch(err){
     setSync("error","Sin conexion");
   }finally{
     isPolling=false;
+  }
+}
+
+/* Historial completo: se carga una vez al entrar a Historial/Admin, no en cada poll */
+async function loadHistoryData(force){
+  if(historyLoaded&&!force)return;
+  try{
+    const[closesD,expensesD,purchasesD]=await Promise.all([
+      fbGetPath("closes",'orderBy="ts"&limitToLast='+HISTORY_LIMIT),
+      fbGetPath("expenses",'orderBy="ts"&limitToLast='+HISTORY_LIMIT),
+      fbGetPath("purchases",'orderBy="ts"&limitToLast='+HISTORY_LIMIT)
+    ]);
+    clsC=closesD||{};
+    expC=expensesD||{};
+    purchC=purchasesD||{};
+    historyLoaded=true;
+    renderCloses();
+    renderExpenses();
+    renderPurchases();
+    populatePurchaseSelect();
+    if(document.getElementById("adminContent")&&document.getElementById("adminContent").style.display!=="none"){
+      renderStats30();
+    }
+  }catch(err){
+    setSync("error","Sin conexion");
   }
 }
 
@@ -819,21 +873,20 @@ function renderAll(){
   renderClientSelect();
   applyProd();
   renderBatches();
-  renderCloses();
-  renderExpenses();
-  renderPurchases();
-  populatePurchaseSelect();
   const eu=document.getElementById("prUnit");if(eu)eu.value=priceC.unit||0;
   const ee=document.getElementById("prEmpUnit");if(ee)ee.value=priceC.empUnit||0;
   if(document.getElementById("adminContent")&&document.getElementById("adminContent").style.display!=="none"){
-    renderStats30();
     applyRecipe();
   }
 }
 
 function startPolling(){
   refreshNow();
+  loadHistoryData(false);
   pollTimer=setInterval(refreshNow,POLL_MS);
+  document.addEventListener("visibilitychange",()=>{
+    if(!document.hidden)refreshNow();
+  });
 }
 
 /* ================== TABS ================== */
@@ -842,6 +895,9 @@ function switchTab(t){
   document.querySelectorAll(".tab").forEach((el,i)=>el.classList.toggle("active",tabs[i]===t));
   document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));
   document.getElementById("panel-"+t).classList.add("active");
+  if(t==="historial"||t==="admin"){
+    loadHistoryData(false);
+  }
   if(t==="admin"&&document.getElementById("adminContent").style.display!=="none"){
     renderStats30();
   }
@@ -886,6 +942,12 @@ async function editClient(k){
   const close=prompt("Cierre (HH:MM):",c.close||"");
   await fbPatch("clients/"+k,{name:name.trim(),addr:(addr||"").trim(),close:(close||"").trim()});
 }
+let expandedClientKeys=new Set();
+function toggleClientRow(key){
+  if(expandedClientKeys.has(key))expandedClientKeys.delete(key);
+  else expandedClientKeys.add(key);
+  renderClients();
+}
 function renderClients(){
   const el=document.getElementById("clientList");if(!el)return;
   const q=(document.getElementById("adminClientSearch")?.value||"").trim().toLowerCase();
@@ -894,14 +956,26 @@ function renderClients(){
   if(q)keys=keys.filter(k=>(cliC[k].name||"").toLowerCase().includes(q));
   const sorted=keys.sort((a,b)=>(cliC[a].name||"").localeCompare(cliC[b].name||"",'es'));
   if(!sorted.length){el.innerHTML='<div class="empty">Ningun cliente coincide con la busqueda.</div>';return;}
-  el.innerHTML=sorted.map(k=>{
+  el.innerHTML='<div style="font-size:.76rem;color:var(--muted);margin-bottom:6px;">'+sorted.length+' cliente'+(sorted.length===1?'':'s')+' - toca uno para ver el detalle</div>'+
+  sorted.map(k=>{
     const c=cliC[k];
-    return '<div class="client-row"><span class="cname">'+c.name+'</span>'+(c.addr?'<span class="caddr">'+c.addr+'</span>':'')+
-    (c.close?'<span class="close-badge">Cierra '+c.close+'</span>':'')+
-    '<span class="clast">'+(c.lastOrder?"Ultimo: "+c.lastOrder:"Sin pedidos")+'</span>'+
-    (c.totalOrdered?'<span style="font-size:.76rem;color:var(--accent2);">'+c.totalOrdered+' items</span>':'')+
-    '<button class="btn-icon edit" onclick="editClient(\''+k+'\')">Editar</button>'+
-    '<button class="btn-icon" onclick="deleteClient(\''+k+'\')">X</button></div>';
+    const isOpen=expandedClientKeys.has(k);
+    return '<div class="client-row'+(isOpen?' expanded':'')+'">'+
+      '<div class="client-row-head" onclick="toggleClientRow(\''+k+'\')">'+
+        '<span class="cname">'+c.name+'</span>'+
+        (c.close?'<span class="close-badge">'+c.close+'</span>':'')+
+        '<span class="client-row-chevron">&#8250;</span>'+
+      '</div>'+
+      '<div class="client-row-body">'+
+        '<div class="client-row-body-line">Direccion: <strong>'+(c.addr||'sin cargar')+'</strong></div>'+
+        '<div class="client-row-body-line">Ultimo pedido: <strong>'+(c.lastOrder||'sin pedidos')+'</strong></div>'+
+        (c.totalOrdered?'<div class="client-row-body-line">Historico: <strong>'+c.totalOrdered+' items pedidos</strong></div>':'')+
+        '<div class="client-row-actions">'+
+          '<button class="btn-icon edit" onclick="event.stopPropagation();editClient(\''+k+'\')">Editar</button>'+
+          '<button class="btn-icon" onclick="event.stopPropagation();deleteClient(\''+k+'\')">Eliminar</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
   }).join("");
 }
 function renderClientSelect(){
@@ -1035,7 +1109,7 @@ function renderOrders(){
     if(o.jyq)chips.push('<span class="ov-chip jyq"><span class="chip-qty">'+o.jyq+'</span> Emp. J&amp;Q</span>');
     const ncTotal=(o.ncTomate||0)+(o.ncCebolla||0)+(o.ncMixta||0)+(o.ncPizzeta||0)+(o.ncCarne||0)+(o.ncJyq||0);
     if(ncTotal>0)chips.push('<span class="ov-chip nocost"><span class="chip-qty">'+ncTotal+'</span> sin costo</span>');
-    return '<div class="order-item'+(o.priority?' priority':'')+'"><div class="order-header"><span class="order-num">'+(i+1)+'</span>'+(o.priority?'<span style="color:var(--accent2);font-weight:700;">PRIO</span>':'')+'<span class="order-name">'+o.name+'</span>'+(o.close?'<span class="order-meta">Cierra '+o.close+'</span>':'')+'<button class="priority-toggle no-print '+(o.priority?'on':'')+'" onclick="togglePriority(\''+k+'\')">'+(o.priority?'Prioritario':'Marcar prioritario')+'</button><button class="btn-icon no-print" onclick="deleteOrder(\''+k+'\')">X</button></div><div class="order-varieties">'+chips.join("")+'</div></div>';
+    return '<div class="order-item'+(o.priority?' priority':'')+'"><div class="order-header"><span class="order-num">'+(i+1)+'</span>'+(o.priority?'<span style="color:var(--accent2);font-weight:700;">PRIO</span>':'')+'<span class="order-name">'+o.name+'</span>'+(o.close?'<span class="order-meta">Cierra '+o.close+'</span>':'')+'<button class="priority-toggle no-print '+(o.priority?'on':'')+'" onclick="togglePriority(\''+k+'\')">'+(o.priority?'Prioritario':'Marcar prioritario')+'</button><button class="btn-icon no-print" onclick="deleteOrder(\''+k+'\')">X</button></div>'+(o.addr?'<div class="order-addr">'+o.addr+'</div>':'')+'<div class="order-varieties">'+chips.join("")+'</div></div>';
   }).join("");
   updateSummary(keys.map(k=>oC[k]));
 }
@@ -1091,11 +1165,30 @@ function renderProduction(){
   const aT=+document.getElementById("aTomate")?.value||0,aCe=+document.getElementById("aCebolla")?.value||0,aM=+document.getElementById("aMixta")?.value||0,aPz=+document.getElementById("aPizzeta")?.value||0,aCar=+document.getElementById("aCarne")?.value||0,aJq=+document.getElementById("aJyq")?.value||0;
   const mT=+document.getElementById("mTomate")?.value||0,mCe=+document.getElementById("mCebolla")?.value||0,mM=+document.getElementById("mMixta")?.value||0,mPz=+document.getElementById("mPizzeta")?.value||0,mCar=+document.getElementById("mCarne")?.value||0,mJq=+document.getElementById("mJyq")?.value||0;
   const dT=hT+aT-mT,dCe=hCe+aCe-mCe,dM=hM+aM-mM,dPz=hPz+aPz-mPz,dCar=hCar+aCar-mCar,dJq=hJq+aJq-mJq;
-  function sr(id,d,t){const el=document.getElementById(id);if(!el)return;const r=t-d;if(r>0){el.textContent="Faltan "+r;el.className="prod-rem rem-warn";}else if(r===0){el.textContent="Listo";el.className="prod-rem rem-ok";}else{el.textContent="Sobran "+Math.abs(r);el.className="prod-rem rem-over";}}
+  function sr(id,d,t){const el=document.getElementById(id);if(!el)return;const r=t-d;if(r>0){el.textContent="Faltan "+r;el.className="prod-rem rem-over";}else if(r===0){el.textContent="Listo";el.className="prod-rem rem-ok";}else{el.textContent="Sobran "+Math.abs(r);el.className="prod-rem rem-ok";}}
   sr("remTomate",dT,tT);sr("remCebolla",dCe,tCe);sr("remMixta",dM,tM);sr("remPizzeta",dPz,tPz);sr("remCarne",dCar,tCar);sr("remJyq",dJq,tJq);
   const rP=(tT+tCe+tM)-(dT+dCe+dM),rPz=tPz-dPz,rEmp=(tCar+tJq)-(dCar+dJq);
-  function ar(id,r,dc){const el=document.getElementById(id);if(!el)return;el.textContent=r!==0?r:"0";el.style.color=r>0?dc:r===0?"#a5d6a7":"#ff9090";}
-  ar("remTotal",rP,"#7ab050");ar("remPizzetaTotal",rPz,"#7090d0");ar("remEmpTotal",rEmp,"#ffb060");
+  function ar(stripId,id,labelId,r,positiveLabel){
+    const strip=document.getElementById(stripId);
+    const el=document.getElementById(id);const lbl=document.getElementById(labelId);
+    if(!el)return;
+    strip.classList.remove("state-faltan","state-sobran");
+    if(r>0){ /* faltan */
+      el.textContent=r;
+      if(lbl)lbl.textContent=positiveLabel+" restantes";
+      strip.classList.add("state-faltan");
+    }else if(r===0){
+      el.textContent="0";
+      if(lbl)lbl.textContent=positiveLabel+" restantes";
+    }else{ /* sobran */
+      el.textContent=Math.abs(r);
+      if(lbl)lbl.textContent=positiveLabel+" sobrantes";
+      strip.classList.add("state-sobran");
+    }
+  }
+  ar("remTotalStrip","remTotal","remTotalLabel",rP,"Pizzas");
+  ar("remPizzetaTotalStrip","remPizzetaTotal","remPizzetaTotalLabel",rPz,"Pizzetas");
+  ar("remEmpTotalStrip","remEmpTotal","remEmpTotalLabel",rEmp,"Empanadas");
 }
 
 /* ================== BATCHES ================== */
@@ -1156,13 +1249,15 @@ function renderBatches(){
 }
 
 /* ================== DAILY CLOSE ================== */
-async function doClose(){
-  const orders=Object.values(oC).filter(o=>o&&o.name);if(!orders.length)return;
-  let tc=0,tce=0,tm=0,tpz=0,tcar=0,tjq=0,ncTotal=0;const cset=new Set();
+async function doClose(customDate){
+  const orders=Object.values(oC).filter(o=>o&&o.name);if(!orders.length){alert("No hay pedidos cargados para cerrar.");return;}
+  let tc=0,tce=0,tm=0,tpz=0,tcar=0,tjq=0,ncTotal=0,ncPizzasTotal=0,ncEmpTotal=0;const cset=new Set();
   const clientTotals={};
   orders.forEach(o=>{
     tc+=o.tomate||0;tce+=o.cebolla||0;tm+=o.mixta||0;tpz+=o.pizzeta||0;tcar+=o.carne||0;tjq+=o.jyq||0;
-    ncTotal+=(o.ncTomate||0)+(o.ncCebolla||0)+(o.ncMixta||0)+(o.ncPizzeta||0)+(o.ncCarne||0)+(o.ncJyq||0);
+    const ncP=(o.ncTomate||0)+(o.ncCebolla||0)+(o.ncMixta||0)+(o.ncPizzeta||0);
+    const ncE=(o.ncCarne||0)+(o.ncJyq||0);
+    ncPizzasTotal+=ncP;ncEmpTotal+=ncE;ncTotal+=ncP+ncE;
     if(o.clientKey){
       cset.add(o.clientKey);
       const tot=(o.tomate||0)+(o.cebolla||0)+(o.mixta||0)+(o.pizzeta||0);
@@ -1176,24 +1271,41 @@ async function doClose(){
   const aT=prodC.aTomate||0,aCe=prodC.aCebolla||0,aM=prodC.aMixta||0,aPz=prodC.aPizzeta||0,aCar=prodC.aCarne||0,aJq=prodC.aJyq||0;
   const mT=prodC.mTomate||0,mCe=prodC.mCebolla||0,mM=prodC.mMixta||0,mPz=prodC.mPizzeta||0,mCar=prodC.mCarne||0,mJq=prodC.mJyq||0;
   const now=new Date();
+  const closeDate=customDate||now.toLocaleDateString("es-AR");
+  const closeTs=customDate?parseArDateToTs(customDate):now.getTime();
+  const closeWeekday=new Date(closeTs).getDay();
   const batchesSnapshot=Object.values(batC).sort((a,b)=>(a.ts||0)-(b.ts||0));
+
+  /* Descuadre: si se pidio mas de lo que habia disponible, NO se esconde con un cero.
+     Queda registrado como numero negativo para poder investigarlo despues. */
+  const rawDiff=(disp,merma,used)=>disp-merma-used;
+  const dT=rawDiff(hT+aT,mT,tc), dCe=rawDiff(hCe+aCe,mCe,tce), dM=rawDiff(hM+aM,mM,tm),
+        dPz=rawDiff(hPz+aPz,mPz,tpz), dCar=rawDiff(hCar+aCar,mCar,tcar), dJq=rawDiff(hJq+aJq,mJq,tjq);
+  const lT=Math.max(0,dT), lCe=Math.max(0,dCe), lM=Math.max(0,dM),
+        lPz=Math.max(0,dPz), lCar=Math.max(0,dCar), lJq=Math.max(0,dJq);
+  const descuadre={};
+  if(dT<0)descuadre.tomate=dT;
+  if(dCe<0)descuadre.cebolla=dCe;
+  if(dM<0)descuadre.mixta=dM;
+  if(dPz<0)descuadre.pizzeta=dPz;
+  if(dCar<0)descuadre.carne=dCar;
+  if(dJq<0)descuadre.jyq=dJq;
+  const hasDescuadre=Object.keys(descuadre).length>0;
+
   const closeKey=await fbPush("closes",{
-    date:now.toLocaleDateString("es-AR"),ts:now.getTime(),weekday:now.getDay(),
+    date:closeDate,ts:closeTs,weekday:closeWeekday,
     pedidosTomate:tc,pedidosCebolla:tce,pedidosMixta:tm,pedidosPizzeta:tpz,pedidosCarne:tcar,pedidosJyq:tjq,
     amasadoTomate:aT,amasadoCebolla:aCe,amasadoMixta:aM,amasadoPizzeta:aPz,amasadoCarne:aCar,amasadoJyq:aJq,
     mermaTomate:mT,mermaCebolla:mCe,mermaMixta:mM,mermaPizzeta:mPz,mermaCarne:mCar,mermaJyq:mJq,
     mermaTotal:mT+mCe+mM+mPz+mCar+mJq,
     totalPizzas:tc+tce+tm+tpz,totalEmpanadas:tcar+tjq,totalPedidos:tc+tce+tm+tpz+tcar+tjq,
     totalAmasado:aT+aCe+aM+aPz+aCar+aJq,clientCount:cset.size||orders.length,
-    noCostTotal:ncTotal,
+    noCostTotal:ncTotal,ncPizzasTotal,ncEmpTotal,
+    descuadre:hasDescuadre?descuadre:null,
     clientTotals,
     batches:batchesSnapshot
   });
   await fbSet("orders",null);await fbSet("batches",null);
-  /* Lo que sobro hoy (disponible - merma - pedido) pasa a heladera para manana; nunca negativo */
-  const leftover=(disp,merma,used)=>Math.max(0,disp-merma-used);
-  const lT=leftover(hT+aT,mT,tc), lCe=leftover(hCe+aCe,mCe,tce), lM=leftover(hM+aM,mM,tm),
-        lPz=leftover(hPz+aPz,mPz,tpz), lCar=leftover(hCar+aCar,mCar,tcar), lJq=leftover(hJq+aJq,mJq,tjq);
   if(closeKey){
     await fbPatch("closes/"+closeKey,{
       sobranteTomate:lT,sobranteCebolla:lCe,sobranteMixta:lM,sobrantePizzeta:lPz,sobranteCarne:lCar,sobranteJyq:lJq,
@@ -1206,18 +1318,41 @@ async function doClose(){
     mTomate:0,mCebolla:0,mMixta:0,mPizzeta:0,mCarne:0,mJyq:0
   });
 
+  if(hasDescuadre){
+    const lines=Object.keys(descuadre).map(k=>k+": faltaron "+Math.abs(descuadre[k])).join(", ");
+    alert("Atencion: el cierre tiene un descuadre (se pidieron mas unidades de las que figuraban disponibles).\n\n"+lines+"\n\nQueda registrado en el historial para que lo revises.");
+  }
+
   /* Genera el PDF del ticket de cierre */
   generateClosePdf({
-    date:now.toLocaleDateString("es-AR"),time:now.toLocaleTimeString("es-AR",{hour:'2-digit',minute:'2-digit'}),
+    date:closeDate,time:now.toLocaleTimeString("es-AR",{hour:'2-digit',minute:'2-digit'}),
     pedidosTomate:tc,pedidosCebolla:tce,pedidosMixta:tm,pedidosPizzeta:tpz,pedidosCarne:tcar,pedidosJyq:tjq,
     amasadoTomate:aT,amasadoCebolla:aCe,amasadoMixta:aM,amasadoPizzeta:aPz,amasadoCarne:aCar,amasadoJyq:aJq,
     mermaTomate:mT,mermaCebolla:mCe,mermaMixta:mM,mermaPizzeta:mPz,mermaCarne:mCar,mermaJyq:mJq,
     sobranteTomate:lT,sobranteCebolla:lCe,sobranteMixta:lM,sobrantePizzeta:lPz,sobranteCarne:lCar,sobranteJyq:lJq,
     totalPizzas:tc+tce+tm+tpz,totalEmpanadas:tcar+tjq,clientCount:cset.size||orders.length,
-    noCostTotal:ncTotal,batches:batchesSnapshot
+    noCostTotal:ncTotal,batches:batchesSnapshot,descuadre:hasDescuadre?descuadre:null
   });
 }
-async function manualClose(){if(!confirm("Hacer cierre del dia? Se guardan los totales y se limpian los pedidos."))return;await doClose();}
+function parseArDateToTs(arDate){
+  /* arDate viene como DD/MM/YYYY */
+  const parts=arDate.split("/");
+  if(parts.length!==3)return Date.now();
+  const d=new Date(+parts[2],+parts[1]-1,+parts[0],12,0,0);
+  return d.getTime();
+}
+async function manualClose(){
+  const dateInput=document.getElementById("closeDateInput");
+  const customDate=dateInput&&dateInput.value?isoToArDate(dateInput.value):null;
+  const label=customDate?("para la fecha "+customDate):"con la fecha de hoy";
+  if(!confirm("Hacer cierre del dia "+label+"? Se guardan los totales y se limpian los pedidos."))return;
+  await doClose(customDate);
+  if(dateInput)dateInput.value=new Date().toISOString().slice(0,10);
+}
+function isoToArDate(iso){
+  const[y,m,d]=iso.split("-");
+  return d+"/"+m+"/"+y;
+}
 
 /* ================== TICKET DE CIERRE (PDF via impresion) ================== */
 function generateClosePdf(d){
@@ -1229,6 +1364,7 @@ function generateClosePdf(d){
   const mermaRows=rows("Tomate",d.mermaTomate)+rows("Cebolla",d.mermaCebolla)+rows("Mixta",d.mermaMixta)+rows("Pizzeta",d.mermaPizzeta)+rows("Empanada Carne",d.mermaCarne)+rows("Empanada Jamon y Queso",d.mermaJyq);
   const sobranteTotal=(d.sobranteTomate||0)+(d.sobranteCebolla||0)+(d.sobranteMixta||0)+(d.sobrantePizzeta||0)+(d.sobranteCarne||0)+(d.sobranteJyq||0);
   const sobranteRows=rows("Tomate",d.sobranteTomate)+rows("Cebolla",d.sobranteCebolla)+rows("Mixta",d.sobranteMixta)+rows("Pizzeta",d.sobrantePizzeta)+rows("Empanada Carne",d.sobranteCarne)+rows("Empanada Jamon y Queso",d.sobranteJyq);
+  const descuadreHtml=d.descuadre?('<h2 style="background:#fdd;color:#a00;">⚠ Descuadre del dia</h2><p style="color:#a00;font-size:.88rem;">Se pidieron mas unidades de las que figuraban disponibles en stock:</p><table>'+Object.keys(d.descuadre).map(k=>'<tr><td>'+k+'</td><td class="tval">'+d.descuadre[k]+'</td></tr>').join("")+'</table>'):'';
 
   const batches=(d.batches||[]).slice().sort((a,b)=>(a.time||"").localeCompare(b.time||""));
   const batchRows=batches.map(b=>{
@@ -1292,6 +1428,8 @@ function generateClosePdf(d){
   <table>${sobranteRows||'<tr><td class="empty-note">No sobro nada</td></tr>'}</table>
   <div class="total-line"><span>Total sobrante</span><span>${sobranteTotal}</span></div>
 
+  ${descuadreHtml}
+
   <div class="footer">Generado automaticamente por el sistema de Del Puerto Pizzeria</div>
 
   <script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
@@ -1322,7 +1460,8 @@ function renderCloses(){
     if(c.noCostTotal)chips.push('<span class="ov-chip nocost"><span class="chip-qty">'+c.noCostTotal+'</span> sin costo</span>');
     const mermaLine=c.mermaTotal?'<div style="font-size:.76rem;color:var(--red);margin-top:4px;">Merma del dia: '+c.mermaTotal+'</div>':'';
     const sobranteLine=c.sobranteTotal?'<div style="font-size:.76rem;color:var(--accent2);margin-top:2px;">Sobraron '+c.sobranteTotal+' que pasaron a heladera para el dia siguiente</div>':'';
-    return '<div class="close-item"><div class="cdate">'+c.date+'</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:5px;">Pizzas: '+(c.totalPizzas||0)+' | Empanadas: '+(c.totalEmpanadas||0)+' | Clientes: '+(c.clientCount||0)+'</div><div class="close-chips">'+chips.join("")+'</div>'+mermaLine+sobranteLine+'<button class="btn-ghost no-print" style="margin-top:8px;" onclick="reprintClosePdf(\''+k+'\')">Ver ticket / PDF</button></div>';
+    const descuadreLine=c.descuadre?'<div style="font-size:.78rem;color:#fff;background:var(--red);padding:6px 10px;border-radius:8px;margin-top:6px;font-weight:700;">⚠ Descuadre: se pidio mas de lo disponible en '+Object.keys(c.descuadre).map(k=>k+' ('+c.descuadre[k]+')').join(', ')+'</div>':'';
+    return '<div class="close-item"><div class="cdate">'+c.date+'</div><div style="font-size:.8rem;color:var(--muted);margin-bottom:5px;">Pizzas: '+(c.totalPizzas||0)+' | Empanadas: '+(c.totalEmpanadas||0)+' | Clientes: '+(c.clientCount||0)+'</div><div class="close-chips">'+chips.join("")+'</div>'+mermaLine+sobranteLine+descuadreLine+'<button class="btn-ghost no-print" style="margin-top:8px;" onclick="reprintClosePdf(\''+k+'\')">Ver ticket / PDF</button></div>';
   }).join("");
 }
 function reprintClosePdf(key){
@@ -1334,10 +1473,10 @@ function reprintClosePdf(key){
     mermaTomate:c.mermaTomate||0,mermaCebolla:c.mermaCebolla||0,mermaMixta:c.mermaMixta||0,mermaPizzeta:c.mermaPizzeta||0,mermaCarne:c.mermaCarne||0,mermaJyq:c.mermaJyq||0,
     sobranteTomate:c.sobranteTomate||0,sobranteCebolla:c.sobranteCebolla||0,sobranteMixta:c.sobranteMixta||0,sobrantePizzeta:c.sobrantePizzeta||0,sobranteCarne:c.sobranteCarne||0,sobranteJyq:c.sobranteJyq||0,
     totalPizzas:c.totalPizzas||0,totalEmpanadas:c.totalEmpanadas||0,clientCount:c.clientCount||0,
-    noCostTotal:c.noCostTotal||0,batches:c.batches||[]
+    noCostTotal:c.noCostTotal||0,batches:c.batches||[],descuadre:c.descuadre||null
   });
 }
-function scheduleAutoClose(){const now=new Date(),midnight=new Date(now);midnight.setHours(24,0,0,0);setTimeout(async()=>{await doClose();scheduleAutoClose();},midnight-now);}
+
 
 /* ================== EXPENSES ================== */
 async function addExpense(){
@@ -1604,6 +1743,12 @@ function renderStats30(){
   const weekdayPizzas=[0,0,0,0,0,0,0],weekdayEmp=[0,0,0,0,0,0,0],weekdayCount=[0,0,0,0,0,0,0];
   let last7Pizzas=0,last7Emp=0;
   const cutoff7=Date.now()-7*24*60*60*1000;
+  /* No se trabaja los domingos: se excluyen de todos los promedios y totales semanales */
+  const workingDays=recent.filter(c=>{
+    const wd=c.weekday!==undefined?c.weekday:new Date(c.ts).getDay();
+    return wd!==0;
+  });
+  let wT=0,wCe=0,wM=0,wPz=0,wCar=0,wJq=0;
 
   recent.forEach(c=>{
     tPizzas+=c.totalPizzas||0;tEmp+=c.totalEmpanadas||0;
@@ -1622,6 +1767,12 @@ function renderStats30(){
       });
     }
   });
+  workingDays.forEach(c=>{
+    wT+=c.pedidosTomate||0;wCe+=c.pedidosCebolla||0;wM+=c.pedidosMixta||0;wPz+=c.pedidosPizzeta||0;wCar+=c.pedidosCarne||0;wJq+=c.pedidosJyq||0;
+  });
+  const workingDaysCount=workingDays.length;
+  /* Promedio diario (solo dias trabajados) x 6 dias habiles = estimacion semanal por variedad */
+  const weeklyEstimate=(total)=>workingDaysCount>0?Math.round((total/workingDaysCount)*6):0;
 
   const rankingTotal=Object.keys(clientAgg).map(k=>({key:k,name:cliC[k]?cliC[k].name:"Cliente",total:clientAgg[k].pizzas+clientAgg[k].empanadas})).sort((a,b)=>b.total-a.total).slice(0,5);
   const rankingPizzas=Object.keys(clientAgg).map(k=>({key:k,name:cliC[k]?cliC[k].name:"Cliente",total:clientAgg[k].pizzas})).filter(x=>x.total>0).sort((a,b)=>b.total-a.total).slice(0,5);
@@ -1632,14 +1783,29 @@ function renderStats30(){
     return '<div class="section-title">'+title+'</div><div class="ranking-list">'+arr.map((c,i)=>'<div class="ranking-item"><span class="ranking-pos">'+(i+1)+'</span><span class="ranking-name">'+c.name+'</span><span class="ranking-qty">'+c.total+'</span></div>').join("")+'</div>';
   }
 
+  /* Los promedios por dia de semana excluyen domingo (weekdayCount[0] va a quedar en 0 si no se trabaja) */
   const weekdayHtmlPizzas='<div class="weekday-grid">'+WEEKDAYS.map((d,i)=>{
+    if(i===0)return ''; /* domingo no se muestra */
     const avg=weekdayCount[i]>0?(weekdayPizzas[i]/weekdayCount[i]).toFixed(1):"0";
     return '<div class="weekday-box"><div class="wdlabel">'+d.slice(0,3)+'</div><div class="wdvalue">'+avg+'</div></div>';
   }).join("")+'</div>';
   const weekdayHtmlEmp='<div class="weekday-grid">'+WEEKDAYS.map((d,i)=>{
+    if(i===0)return '';
     const avg=weekdayCount[i]>0?(weekdayEmp[i]/weekdayCount[i]).toFixed(1):"0";
     return '<div class="weekday-box"><div class="wdlabel">'+d.slice(0,3)+'</div><div class="wdvalue">'+avg+'</div></div>';
   }).join("")+'</div>';
+
+  const weeklyTotalsHtml='<div class="section-title">Estimado por semana (excluye domingos, en base al promedio de '+workingDaysCount+' dias trabajados)</div>'+
+    '<div class="summary-grid">'+
+    '<div class="sum-box tomate"><div class="label">Tomate</div><div class="value">'+weeklyEstimate(wT)+'</div></div>'+
+    '<div class="sum-box cebolla"><div class="label">Cebolla</div><div class="value">'+weeklyEstimate(wCe)+'</div></div>'+
+    '<div class="sum-box mixta"><div class="label">Mixta</div><div class="value">'+weeklyEstimate(wM)+'</div></div>'+
+    '</div>'+
+    '<div class="summary-grid" style="grid-template-columns:repeat(3,1fr)">'+
+    '<div class="sum-box pizzeta" style="background:var(--bg);border:1px solid var(--border);"><div class="label" style="color:var(--blue-text)">Pizzeta</div><div class="value" style="color:var(--blue-text)">'+weeklyEstimate(wPz)+'</div></div>'+
+    '<div class="sum-box carne" style="background:var(--bg);border:1px solid var(--border);"><div class="label">Emp. Carne</div><div class="value">'+weeklyEstimate(wCar)+'</div></div>'+
+    '<div class="sum-box jyq" style="background:var(--bg);border:1px solid var(--border);"><div class="label">Emp. J&amp;Q</div><div class="value">'+weeklyEstimate(wJq)+'</div></div>'+
+    '</div>';
 
   const priceInfo=priceC.unit||priceC.empUnit?
     '<div class="stat-box"><div class="slabel">Ingresos est. (30 dias)</div><div class="svalue" style="color:#4caf50">$'+Math.round(tPizzas*(priceC.unit||0)+tEmp*(priceC.empUnit||0)).toLocaleString("es-AR")+'</div></div>':'';
@@ -1654,6 +1820,7 @@ function renderStats30(){
     (tNoCost>0?'<div class="stat-box"><div class="slabel">Sin costo (30d)</div><div class="svalue" style="color:var(--nocost-text)">'+tNoCost+'</div></div>':'')+
     priceInfo+
     '</div>'+
+    weeklyTotalsHtml+
     rankingHtml("Top clientes - total (30 dias)",rankingTotal)+
     rankingHtml("Top clientes - pizzas (30 dias)",rankingPizzas)+
     rankingHtml("Top clientes - empanadas (30 dias)",rankingEmp)+
@@ -1662,6 +1829,46 @@ function renderStats30(){
 }
 
 /* ================== BALANCE MENSUAL (costeo simplificado) ================== */
+/* Costo estimado por unidad en base a la RECETA cargada (consumo real esperado),
+   NO en base a compras del mes. Evita que una compra grande en un dia dispare el costo. */
+function estimateRecipeCostPerUnit(){
+  const yieldP=recC.yieldPizza||0;
+  let baseTotal=0,hasBase=false;
+  PIZZA_INGREDIENTS_BASE.forEach(i=>{
+    const q=recC[i.key+"_qty"]||0;
+    if(q<=0)return;
+    const cost=findIngredientUnitCost(i.key);
+    if(cost>0)hasBase=true;
+    baseTotal+=q*cost;
+  });
+  const baseCostPerPizza=yieldP>0?baseTotal/yieldP:0;
+
+  const varietyAvgCosts=[];
+  PIZZA_VARIETY_TOPPINGS.forEach(v=>{
+    let vc=0;
+    v.items.forEach(i=>{
+      const q=recC[i.key+"_qty"]||0;
+      if(q<=0)return;
+      const ingKey=i.key.includes("tomate")?"tomate":"cebolla";
+      vc+=q*findIngredientUnitCost(ingKey);
+    });
+    varietyAvgCosts.push(baseCostPerPizza+vc);
+  });
+  const pizzaAvg=varietyAvgCosts.length?varietyAvgCosts.reduce((s,v)=>s+v,0)/varietyAvgCosts.length:baseCostPerPizza;
+
+  const yieldE=recC.yieldEmp||0;
+  let empTotal=0;
+  EMP_INGREDIENTS.forEach(i=>{
+    const q=recC[i.key+"_qty"]||0;
+    if(q<=0)return;
+    empTotal+=q*findIngredientUnitCost(i.key);
+  });
+  const empCost=yieldE>0?empTotal/yieldE:0;
+
+  const hasData=(yieldP>0&&baseTotal>0)||(yieldE>0&&empTotal>0);
+  return {pizzaAvg,empCost,hasData};
+}
+
 function calcBalance(){
   const month=document.getElementById("balanceMonth").value;if(!month){alert("Selecciona un mes.");return;}
   const[yr,mo]=month.split("-");
@@ -1669,10 +1876,27 @@ function calcBalance(){
   let tPizzas=0,tEmp=0,tCli=0,tNoCost=0;
   closes.forEach(c=>{tPizzas+=c.totalPizzas||0;tEmp+=c.totalEmpanadas||0;tCli+=c.clientCount||0;tNoCost+=c.noCostTotal||0;});
   const days=closes.length;
-  const totalUnidades=tPizzas+tEmp;
+
+  /* Las unidades "sin costo" (falladas/cortesia) NO generan ingreso: se restan antes de facturar */
+  const tNoCostPizzas=closes.reduce((s,c)=>s+(c.ncPizzasTotal!=null?c.ncPizzasTotal:0),0);
+  /* Si el cierre no separo pizza/empanada en su momento, aproximamos repartiendo proporcionalmente */
+  let billablePizzas,billableEmp;
+  if(closes.some(c=>c.ncPizzasTotal!=null||c.ncEmpTotal!=null)){
+    const ncP=closes.reduce((s,c)=>s+(c.ncPizzasTotal||0),0);
+    const ncE=closes.reduce((s,c)=>s+(c.ncEmpTotal||0),0);
+    billablePizzas=Math.max(0,tPizzas-ncP);
+    billableEmp=Math.max(0,tEmp-ncE);
+  }else{
+    /* Cierres viejos sin el desglose: repartimos el sin-costo proporcional a pizzas/empanadas del mes */
+    const totalUnidadesBrutas=tPizzas+tEmp;
+    const ncP=totalUnidadesBrutas>0?Math.round(tNoCost*(tPizzas/totalUnidadesBrutas)):0;
+    const ncE=tNoCost-ncP;
+    billablePizzas=Math.max(0,tPizzas-ncP);
+    billableEmp=Math.max(0,tEmp-ncE);
+  }
 
   const puPizza=priceC.unit||0,puEmp=priceC.empUnit||0;
-  const ingPizzas=tPizzas*puPizza,ingEmp=tEmp*puEmp,totalIngresos=ingPizzas+ingEmp;
+  const ingPizzas=billablePizzas*puPizza,ingEmp=billableEmp*puEmp,totalIngresos=ingPizzas+ingEmp;
 
   const gastos=Object.values(expC).filter(e=>{if(!e.date)return false;const[ey,em]=e.date.split("-");return ey===yr&&em===mo;});
   const totalGastosGenerales=gastos.reduce((s,e)=>s+Number(e.amt||0),0);
@@ -1680,7 +1904,10 @@ function calcBalance(){
   const compras=Object.values(purchC).filter(p=>{if(!p.date)return false;const[py,pm]=p.date.split("-");return py===yr&&pm===mo;});
   const totalCompras=compras.reduce((s,p)=>s+Number(p.price||0),0);
 
-  const costoPorUnidad=totalUnidades>0?totalCompras/totalUnidades:0;
+  /* Costo por unidad: en base a la RECETA (consumo real esperado por pizza/empanada), no a compras del mes */
+  const recipeCost=estimateRecipeCostPerUnit();
+  const costoEstimadoTotal=(tPizzas*recipeCost.pizzaAvg)+(tEmp*recipeCost.empCost);
+
   const totalGastos=totalGastosGenerales+totalCompras;
   const balance=totalIngresos-totalGastos;
   const fmt=n=>Math.round(n).toLocaleString("es-AR");
@@ -1689,13 +1916,13 @@ function calcBalance(){
     '<div class="stat-grid" style="margin-top:12px">'+
     '<div class="stat-box"><div class="slabel">Dias con cierre</div><div class="svalue">'+days+'</div></div>'+
     '<div class="stat-box"><div class="slabel">Clientes totales</div><div class="svalue">'+tCli+'</div></div>'+
-    '<div class="stat-box"><div class="slabel">Pizzas vendidas</div><div class="svalue">'+tPizzas+'</div></div>'+
-    '<div class="stat-box"><div class="slabel">Empanadas vendidas</div><div class="svalue">'+tEmp+'</div></div>'+
-    (tNoCost>0?'<div class="stat-box"><div class="slabel">Sin costo (no cobradas)</div><div class="svalue" style="color:var(--nocost-text)">'+tNoCost+'</div></div>':'')+
-    '<div class="stat-box"><div class="slabel">Gastado en insumos</div><div class="svalue" style="color:var(--red)">$'+fmt(totalCompras)+'</div></div>'+
-    '<div class="stat-box"><div class="slabel">Costo promedio / unidad</div><div class="svalue">$'+costoPorUnidad.toFixed(2)+'</div><div class="ssub">Compras del mes / unidades producidas</div></div>'+
+    '<div class="stat-box"><div class="slabel">Pizzas hechas</div><div class="svalue">'+tPizzas+'</div><div class="ssub">'+billablePizzas+' facturables</div></div>'+
+    '<div class="stat-box"><div class="slabel">Empanadas hechas</div><div class="svalue">'+tEmp+'</div><div class="ssub">'+billableEmp+' facturables</div></div>'+
+    (tNoCost>0?'<div class="stat-box"><div class="slabel">Sin costo (no cobradas)</div><div class="svalue" style="color:var(--nocost-text)">'+tNoCost+'</div><div class="ssub">Ya restadas de los ingresos</div></div>':'')+
+    '<div class="stat-box"><div class="slabel">Gastado en compras</div><div class="svalue" style="color:var(--red)">$'+fmt(totalCompras)+'</div><div class="ssub">Flujo de caja del mes, no es costo por unidad</div></div>'+
+    (recipeCost.hasData?'<div class="stat-box"><div class="slabel">Costo estimado (por receta)</div><div class="svalue">$'+fmt(costoEstimadoTotal)+'</div><div class="ssub">Pizza ~$'+recipeCost.pizzaAvg.toFixed(2)+' / Emp ~$'+recipeCost.empCost.toFixed(2)+'</div></div>':'<div class="stat-box"><div class="slabel">Costo estimado</div><div class="svalue" style="color:var(--muted);font-size:1.1rem;">Sin receta cargada</div></div>')+
     '<div class="stat-box"><div class="slabel">Otros gastos</div><div class="svalue" style="color:var(--red)">$'+fmt(totalGastosGenerales)+'</div></div>'+
-    (puPizza>0||puEmp>0?'<div class="stat-box"><div class="slabel">Ingresos est.</div><div class="svalue" style="color:#4caf50">$'+fmt(totalIngresos)+'</div><div class="ssub">Pizzas:$'+fmt(ingPizzas)+' Emp:$'+fmt(ingEmp)+'</div></div>':'')+
+    (puPizza>0||puEmp>0?'<div class="stat-box"><div class="slabel">Ingresos facturables</div><div class="svalue" style="color:#4caf50">$'+fmt(totalIngresos)+'</div><div class="ssub">Pizzas:$'+fmt(ingPizzas)+' Emp:$'+fmt(ingEmp)+'</div></div>':'')+
     '</div>'+
     ((puPizza>0||puEmp>0)?'<div class="total-strip '+(balance>=0?"pizzas":"pizzetas")+'" style="'+(balance<0?"background:var(--red)":"")+'"><span class="tl">Balance del mes (ingresos - insumos - otros gastos)</span><span class="tv">'+(balance>=0?"+":"")+"$"+fmt(balance)+'</span></div>':'<p style="color:var(--muted);font-size:.82rem;">Configura los precios de venta para ver el balance completo.</p>')+
     (totalUnidades===0?'<p class="hint-text" style="margin-top:10px;">No hay cierres registrados este mes, asi que no se puede calcular el costo por unidad todavia.</p>':'');
@@ -1706,9 +1933,9 @@ document.getElementById("purchDate").value=new Date().toISOString().slice(0,10);
 document.getElementById("batchTime").value=new Date().toTimeString().slice(0,5);
 document.getElementById("balanceMonth").value=new Date().toISOString().slice(0,7);
 document.getElementById("realCostMonth").value=new Date().toISOString().slice(0,7);
+const closeDateEl=document.getElementById("closeDateInput");if(closeDateEl)closeDateEl.value=new Date().toISOString().slice(0,10);
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&document.activeElement.closest("#panel-pedidos"))addOrder();});
 startPolling();
-scheduleAutoClose();
 </script>
 </body>
 </html>
