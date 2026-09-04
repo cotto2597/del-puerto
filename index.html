@@ -199,13 +199,13 @@ button:active{transform:scale(.96);}
 .admin-lock input{max-width:260px;margin:0 auto 12px;display:block;}
 
 .client-list{display:flex;flex-direction:column;gap:5px;max-height:480px;overflow-y:auto;padding-right:2px;}
-.client-row{background:var(--bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s;}
+.client-row{background:var(--bg);border:1px solid var(--border);border-radius:10px;transition:border-color .2s;}
 .client-row.expanded{border-color:var(--accent);}
-.client-row-head{padding:9px 13px;display:flex;align-items:center;gap:8px;cursor:pointer;}
-.client-row .cname{font-weight:700;flex:1;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.client-row-head{min-height:40px;padding:9px 13px;display:flex;align-items:center;gap:8px;cursor:pointer;}
+.client-row .cname{font-weight:700;flex:1 1 auto;min-width:0;font-size:.88rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .client-row .caddr{color:var(--muted);font-size:.78rem;}
 .client-row .clast{color:var(--accent2);font-size:.72rem;}
-.client-row-chevron{color:var(--muted);font-size:.8rem;flex:0 0 auto;transition:transform .2s;}
+.client-row-chevron{color:var(--muted);font-size:1rem;flex:0 0 auto;transition:transform .2s;}
 .client-row.expanded .client-row-chevron{transform:rotate(90deg);}
 .client-row-body{display:none;padding:0 13px 12px;flex-direction:column;gap:6px;border-top:1px solid var(--border);}
 .client-row.expanded .client-row-body{display:flex;}
@@ -869,7 +869,7 @@ async function loadHistoryData(force){
 
 function renderAll(){
   renderOrders();
-  renderClients();
+  if(document.activeElement?.id!=="adminClientSearch")renderClients();
   renderClientSelect();
   applyProd();
   renderBatches();
@@ -951,7 +951,7 @@ function toggleClientRow(key){
 function renderClients(){
   const el=document.getElementById("clientList");if(!el)return;
   const q=(document.getElementById("adminClientSearch")?.value||"").trim().toLowerCase();
-  let keys=Object.keys(cliC);
+  let keys=Object.keys(cliC).filter(k=>cliC[k]&&typeof cliC[k]==="object");
   if(!keys.length){el.innerHTML='<div class="empty">No hay clientes.</div>';return;}
   if(q)keys=keys.filter(k=>(cliC[k].name||"").toLowerCase().includes(q));
   const sorted=keys.sort((a,b)=>(cliC[a].name||"").localeCompare(cliC[b].name||"",'es'));
@@ -959,6 +959,7 @@ function renderClients(){
   el.innerHTML='<div style="font-size:.76rem;color:var(--muted);margin-bottom:6px;">'+sorted.length+' cliente'+(sorted.length===1?'':'s')+' - toca uno para ver el detalle</div>'+
   sorted.map(k=>{
     const c=cliC[k];
+    if(!c||!c.name)return '';
     const isOpen=expandedClientKeys.has(k);
     return '<div class="client-row'+(isOpen?' expanded':'')+'">'+
       '<div class="client-row-head" onclick="toggleClientRow(\''+k+'\')">'+
